@@ -113,6 +113,62 @@ public class PlayerController : MonoBehaviour
             targetStats.TakeDamage(characterStats, targetStats);
         }
     }
+    //道具
+    void OnTriggerEnter(Collider other)
+    {
+        //碰到物体 检测tag
+        //床：bed 帐篷：tent 神奇小鱼：fish 海豹玩偶：toy 滑板车：scooter
+
+        //帐篷：跳跃增幅20%，蓄力值+1，使用后变成bed
+        if (other.gameObject.tag.CompareTo("tent") == 0)
+        {
+            Debug.Log("触发道具：帐篷");
+            /*
+             jump=jump*1.2;
+             anger++;
+             */
+            other.gameObject.tag = "bed";//修改tag
+                                         //可能还要修改贴图？
+        }
+        //床：跳跃增幅20%，蓄力值+1，使用后消失
+        if (other.gameObject.tag.CompareTo("bed") == 0)
+        {
+            Debug.Log("触发道具：床");
+            /*
+             jump=jump*1.2;
+             anger++;
+             */
+            other.gameObject.SetActive(false);//隐藏物体
+        }
+        //神奇小鱼：即用道具，清空污染槽，跳跃与水平移动均增幅30%，使用后消失
+        if (other.gameObject.tag.CompareTo("fish") == 0)
+        {
+            Debug.Log("触发道具：神奇小鱼");
+            /*
+             dirty=0;
+             jump=jump*1.3;
+             walk=walk*1.3;
+             */
+            other.gameObject.SetActive(false);//隐藏物体
+        }
+        //海豹玩偶：即用道具，抵挡人类捕捉一次，使用后消失
+        if (other.gameObject.tag.CompareTo("toy") == 0)
+        {
+            Debug.Log("触发道具：海豹玩偶");
+            /*
+             ifCaptured=0;//无法被捕捉
+             */
+            other.gameObject.SetActive(false);//隐藏物体
+        }
+        //滑板车：待定
+        if (other.gameObject.tag.CompareTo("scooter") == 0)
+        {
+            Debug.Log("滑板车");
+        }
+        //MonoBehaviour.OnTriggerEnter(Collider other)//当进入触发器
+        //MonoBehaviour.OnTriggerExit(Collider other)//当退出触发器
+        //MonoBehaviour.OnTriggerStay(Collider other)//当逗留触发器
+    }
 
 
 }
