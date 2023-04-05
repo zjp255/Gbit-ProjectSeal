@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
-
+        
         stopDistance = agent.stoppingDistance;
     }
 
@@ -54,6 +54,8 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
         anim.SetBool("Death", isDead);
     }
+
+
     public void MoveToTarget(Vector3 target)
     {
         StopAllCoroutines();
