@@ -56,10 +56,10 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
         {
             TransitionDestination targetDestination = GetDestination(destinationTag);
             player = GameManager.Instance.playerStats.gameObject;
-            //playerAgent = player.GetComponent<NavMeshAgent>();
-            //playerAgent.enabled = false;
+            playerAgent = player.GetComponent<NavMeshAgent>();
+            playerAgent.enabled = false;
             player.transform.SetPositionAndRotation(targetDestination.transform.position, targetDestination.transform.rotation);
-            //playerAgent.enabled = true;
+            playerAgent.enabled = true;
             yield return null;
         }
     }
@@ -87,7 +87,7 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
 
     public void TransitionToFirstLevel()
     {
-        StartCoroutine(LoadLevel("Forest"));
+        StartCoroutine(LoadLevel("Level1"));
     }
 
     IEnumerator LoadLevel(string scene)

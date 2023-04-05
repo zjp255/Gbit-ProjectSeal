@@ -11006,7 +11006,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1203ea6aec818f84287ca99e24676c67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 7467388040996348577, guid: 135841ab9a7096249abbf1dca0f3d8cf, type: 3}
+  playerPrefab: {fileID: 7467388040996348577, guid: 5abcdedf219528c4982463840c9483df, type: 3}
   sceneFaderPrefab: {fileID: 7074125909863265946, guid: 1d5ec469e3e14e44b9b0762c152f9b7d, type: 3}
 --- !u!1 &4000024153027432106
 GameObject:
