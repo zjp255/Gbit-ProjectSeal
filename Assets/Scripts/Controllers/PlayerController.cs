@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    private NavMeshAgent agent;
+    //private NavMeshAgent agent;
     private Animator anim;
     private CharacterStats characterStats;
     private GameObject attackTarget;
@@ -14,17 +14,17 @@ public class PlayerController : MonoBehaviour
     private float stopDistance;
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        //agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
 
-        stopDistance = agent.stoppingDistance;
+        //stopDistance = agent.stoppingDistance;
     }
 
     private void OnEnable()
     {
-        MouseManager.Instance.OnMouseClicked += MoveToTarget;
-        MouseManager.Instance.OnEnemyClicked += EventAttack;
+        //MouseManager.Instance.OnMouseClicked += MoveToTarget;
+        //MouseManager.Instance.OnEnemyClicked += EventAttack;
         GameManager.Instance.RigisterPlayer(characterStats);
     }
 
@@ -36,8 +36,8 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         if (!MouseManager.IsInitialized) return;
-        MouseManager.Instance.OnMouseClicked -= MoveToTarget;
-        MouseManager.Instance.OnEnemyClicked -= EventAttack;
+        //MouseManager.Instance.OnMouseClicked -= MoveToTarget;
+        //MouseManager.Instance.OnEnemyClicked -= EventAttack;
     }
 
     private void Update()
@@ -51,68 +51,70 @@ public class PlayerController : MonoBehaviour
     }
     public void SwitchAnimation()
     {
-        anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
+        //anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
         anim.SetBool("Death", isDead);
     }
-    public void MoveToTarget(Vector3 target)
-    {
-        StopAllCoroutines();
-        if (isDead) return;
-        agent.stoppingDistance = stopDistance;
-        agent.isStopped = false;
-        agent.destination = target;
-    }
-    public void EventAttack(GameObject target)
-    {
-        if (isDead) return;
-        if(target != null)
-        {
-            attackTarget = target;
-            characterStats.isCritical = UnityEngine.Random.value < characterStats.attackData.criticalChance;
-            StartCoroutine(MoveToAttackTarget());
-        }
-    }
-    IEnumerator MoveToAttackTarget()
-    {
-        agent.isStopped = false;
-        agent.stoppingDistance = characterStats.attackData.attackRange;
-        transform.LookAt(attackTarget.transform);
-        while (Vector3.Distance(attackTarget.transform.position, transform.position) > characterStats.attackData.attackRange)
-        {
-            agent.destination = attackTarget.transform.position;
-            yield return null;
-        }
-        agent.isStopped = true;
 
-        if(lastAttackTime < 0)
-        {
-            anim.SetBool("Critical", characterStats.isCritical);
-            anim.SetTrigger("Attack");
-            //reset attack CD
-            lastAttackTime = characterStats.attackData.coolDown;
-        }
-    }
+
+    //public void MoveToTarget(Vector3 target)
+    //{
+    //    StopAllCoroutines();
+    //    if (isDead) return;
+    //    //agent.stoppingDistance = stopDistance;
+    //    //agent.isStopped = false;
+    //    //agent.destination = target;
+    //}
+    //public void EventAttack(GameObject target)
+    //{
+    //    if (isDead) return;
+    //    if(target != null)
+    //    {
+    //        attackTarget = target;
+    //        characterStats.isCritical = UnityEngine.Random.value < characterStats.attackData.criticalChance;
+    //        StartCoroutine(MoveToAttackTarget());
+    //    }
+    //}
+    //IEnumerator MoveToAttackTarget()
+    //{
+    //    //agent.isStopped = false;
+    //    //agent.stoppingDistance = characterStats.attackData.attackRange;
+    //    transform.LookAt(attackTarget.transform);
+    //    while (Vector3.Distance(attackTarget.transform.position, transform.position) > characterStats.attackData.attackRange)
+    //    {
+    //        //agent.destination = attackTarget.transform.position;
+    //        yield return null;
+    //    }
+    //    //agent.isStopped = true;
+
+    //    if(lastAttackTime < 0)
+    //    {
+    //        anim.SetBool("Critical", characterStats.isCritical);
+    //        anim.SetTrigger("Attack");
+    //        //reset attack CD
+    //        lastAttackTime = characterStats.attackData.coolDown;
+    //    }
+    //}
 
     //Animation Event
-    void Hit()
-    {
-        if (attackTarget.CompareTag("Attackable"))
-        {
-            if (attackTarget.GetComponent<Rock>() && attackTarget.GetComponent<Rock>().rockState == Rock.RockStates.HitNothing)
-            {
-                attackTarget.GetComponent<Rock>().rockState = Rock.RockStates.HitEnemy;
+    //void Hit()
+    //{
+    //    if (attackTarget.CompareTag("Attackable"))
+    //    {
+    //        if (attackTarget.GetComponent<Rock>() && attackTarget.GetComponent<Rock>().rockState == Rock.RockStates.HitNothing)
+    //        {
+    //            attackTarget.GetComponent<Rock>().rockState = Rock.RockStates.HitEnemy;
 
-                attackTarget.GetComponent<Rigidbody>().velocity = Vector3.one;
-                attackTarget.GetComponent<Rigidbody>().AddForce(transform.forward * 20,ForceMode.Impulse);
-            }
-        }
-        else
-        {
-            var targetStats = attackTarget.GetComponent<CharacterStats>();
+    //            attackTarget.GetComponent<Rigidbody>().velocity = Vector3.one;
+    //            attackTarget.GetComponent<Rigidbody>().AddForce(transform.forward * 20,ForceMode.Impulse);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        var targetStats = attackTarget.GetComponent<CharacterStats>();
 
-            targetStats.TakeDamage(characterStats, targetStats);
-        }
-    }
+    //        targetStats.TakeDamage(characterStats, targetStats);
+    //    }
+    //}
 
 
 }
