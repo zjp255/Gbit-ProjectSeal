@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
-
+        
         stopDistance = agent.stoppingDistance;
     }
 
