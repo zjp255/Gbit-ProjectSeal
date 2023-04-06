@@ -8,6 +8,7 @@ public class CharacterStats : MonoBehaviour
     public event Action<int, int> UpdateHealthBarOnAttack;
     public CharacterData_SO templateData;
     public CharacterData_SO characterData;
+
     public AttackData_SO attackData;
     private AttackData_SO baseAttackData;
     private RuntimeAnimatorController baseAnimator;
@@ -28,6 +29,28 @@ public class CharacterStats : MonoBehaviour
     }
 
     #region Read from Data_SO
+    //新的
+    public int angerNum
+    {
+        get { return characterData != null ? characterData.angerNum : 0; }
+        set { characterData.angerNum = value; }
+    }
+    public int dirtyNum
+    {
+        get { return characterData != null ? characterData.dirtyNum : 0; }
+        set { characterData.dirtyNum = value; }
+    }
+    public int bloodNum
+    {
+        get { return characterData != null ? characterData.bloodNum : 0; }
+        set { characterData.bloodNum = value; }
+    }
+    public bool ifDead
+    {
+        get { return characterData != null ? characterData.ifDead : false; }
+        set { characterData.ifDead = value; }
+    }
+    //下面是老的
     public int MaxHealth
     {
         get { return characterData != null ? characterData.maxHealth: 0; }
