@@ -12,6 +12,11 @@ public class CharacterData_SO : ScriptableObject
     public int baseDefence;
     public int currentDefence;
 
+    public int angerNum;//蓄力槽:满10为一格，最满4格
+    public int dirtyNum;//污染条
+    public int bloodNum;//血条（海豹玩偶数量，初始为0）
+    public bool ifDead;//是否死亡
+
     [Header("Kill")]
     public int killPoint;
 
@@ -42,5 +47,19 @@ public class CharacterData_SO : ScriptableObject
         currentHealth = maxHealth;
 
         Debug.Log("LEVEL UP!" + currentLevel + "Max Health:" + maxHealth);
+    }
+    //死亡判定
+    public void SealDead()
+    {
+        if(bloodNum<0)
+        {
+            ifDead = true;
+            Debug.Log("die because of being captured");
+        }
+        if(dirtyNum==3)
+        {
+            ifDead = true;
+            Debug.Log("die because of being poisoned");
+        }
     }
 }
