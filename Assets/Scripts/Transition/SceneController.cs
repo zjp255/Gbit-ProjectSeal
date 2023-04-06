@@ -97,7 +97,8 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
         {
             yield return StartCoroutine(fade.FadeOut(1f));
             yield return SceneManager.LoadSceneAsync(scene);
-            yield return player = Instantiate(playerPrefab, GameManager.Instance.GetEntrance().position, GameManager.Instance.GetEntrance().rotation);
+            GameObject player = GameObject.Find("Player");
+            player.transform.Find("Player").gameObject.SetActive(true);
             
             SaveManager.Instance.SavePlayerData();
             //InventoryManager.Instance.SaveData();
