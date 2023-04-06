@@ -9,6 +9,7 @@ TagManager:
   - Attackable
   - Protal
   - Item
+  - bed
   layers:
   - Default
   - TransparentFX
