@@ -18,20 +18,20 @@ public class MainMenu : MonoBehaviour
         continueBtn = transform.GetChild(2).GetComponent<Button>();
         quitBtn = transform.GetChild(3).GetComponent<Button>();
 
-        newGameBtn.onClick.AddListener(PlayTimeline);
+        newGameBtn.onClick.AddListener(NewGame);
         continueBtn.onClick.AddListener(ContinueGame);
         quitBtn.onClick.AddListener(QuitGame);
 
-        director = FindObjectOfType<PlayableDirector>();
-        director.stopped += NewGame;
+        //director = FindObjectOfType<PlayableDirector>();
+        //director.stopped += NewGame;
     }
 
-    void PlayTimeline()
-    {
-        director.Play();
-    }
+    //void PlayTimeline()
+    //{
+    //    director.Play();
+    //}
 
-    void NewGame(PlayableDirector obj)
+    void NewGame()
     {
         PlayerPrefs.DeleteAll();
         //load forest scene

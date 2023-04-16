@@ -6,7 +6,7 @@ using Cinemachine;
 public class GameManager : Singleton<GameManager>
 {
     public CharacterStats playerStats;
-    private CinemachineFreeLook followCamera;
+    private CinemachineVirtualCamera camera;
 
     List<IEndGameObserver> endGameObservers = new List<IEndGameObserver>();
 
@@ -19,11 +19,11 @@ public class GameManager : Singleton<GameManager>
     public void RigisterPlayer(CharacterStats player)
     {
         playerStats = player;
-        followCamera = FindObjectOfType<CinemachineFreeLook>();
-        if(followCamera!=null)
+        camera = FindObjectOfType<CinemachineVirtualCamera>();
+        if(camera != null)
         {
-            followCamera.Follow = playerStats.transform.GetChild(2);
-            followCamera.LookAt = playerStats.transform.GetChild(2);
+            camera.Follow = playerStats.transform.GetChild(2);
+            camera.LookAt = playerStats.transform.GetChild(2);
         }
     }
 
