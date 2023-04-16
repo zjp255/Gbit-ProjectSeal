@@ -19,14 +19,19 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundPlayer;
     [Header("PlayerControl")]
     private CharacterController controller;
-    public float speed = 5f;
-    public float jumpHeight;
+    public float speed = 5f;        //水平移动速度
+    public float jumpHeight;        //最高点高度
+    private float curJumpHeight;    //当前最高点高度
+    public float heightReduceFactor;//最高点高度衰减系数
+    public float jumpLowerLimit;    //弹跳的最低高度
+    private bool isJumpping = false;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
         controller = GetComponent<CharacterController>();
+        curJumpHeight = jumpHeight;
     }
 
     private void OnEnable()
@@ -39,25 +44,47 @@ public class PlayerController : MonoBehaviour
         SaveManager.Instance.LoadPlayerData();
     }
 
+    // 还没有设置转方向的事情/////////////////////////////////
     private void Update()
     {
         CheckPlayerCondition();
         SwitchAnimation();
-        PlayerPhysics();
-        if (Input.GetButtonDown("Jump") && isGround)
+        SimulatePhysics();
+        // 静止状态，在地面上起跳
+        if (!isJumpping && Input.GetButtonDown("Jump") && isGround)
         {
-            playerVelocity.y = Mathf.Sqrt(-gravity * 2f * jumpHeight);
+            isJumpping = true;
         }
-        if (!isGround)
+        // 起跳状态
+        if (isJumpping)
         {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-            Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
-            controller.Move(moveDir * speed * Time.deltaTime);
+            if (!isGround)
+            {
+                // 滞空时，可以用方向键控制水平移动
+                float horizontal = Input.GetAxis("Horizontal");
+                float vertical = Input.GetAxis("Vertical");
+                Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+                controller.Move(moveDir * speed * Time.deltaTime);
+            }
+            else
+            {
+                if(curJumpHeight >= jumpLowerLimit)
+                {
+                    // 向上跳跃
+                    playerVelocity.y = Mathf.Sqrt(-gravity * 2f * curJumpHeight);
+                    //每次落地，最大高度衰减5%
+                    curJumpHeight = curJumpHeight * (1 - heightReduceFactor);
+                }
+                else
+                {
+                    //当跳跃高度小于设定的最小值，小海豹水平移动
+                    controller.Move(transform.forward * speed * Time.deltaTime);
+                }
+            }
         }
     }
 
-    private void PlayerPhysics()
+    private void SimulatePhysics()
     {
         playerVelocity.y += gravity * Time.deltaTime;
         isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);

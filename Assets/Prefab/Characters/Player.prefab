@@ -2020,6 +2020,8 @@ MonoBehaviour:
     m_Bits: 8
   speed: 5
   jumpHeight: 5
+  heightReduceFactor: 0.05
+  jumpLowerLimit: 0.5
 --- !u!114 &6876266028851343428
 MonoBehaviour:
   m_ObjectHideFlags: 0
