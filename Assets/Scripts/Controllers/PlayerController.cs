@@ -5,26 +5,28 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    private NavMeshAgent agent;//导航
+    //private NavMeshAgent agent;//导航
     private Animator anim;//播放动画
     private CharacterStats characterStats;//属性
     private GameObject attackTarget;//攻击目标
     private float lastAttackTime;//攻击cd
-    private bool isDead;//自己
+    private bool isDead;//是否死亡
     private float stopDistance;//最近距离
 
-    //新增变量
-    //运动
-    //水平
-    //垂直
+    private float moveSpeed = 5f;
+    private float rotateSpeed = 5f;
+    private float jumpSpeed = 8f;
+    private bool isOnGround = true;
+    private Vector3 moveAmount;
+    Rigidbody rb;
 
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        //agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
         
-        stopDistance = agent.stoppingDistance;
+        //stopDistance = agent.stoppingDistance;
     }
 
     private void OnEnable()
@@ -57,7 +59,7 @@ public class PlayerController : MonoBehaviour
     }
     public void SwitchAnimation()
     {
-        anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
+        //anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
         anim.SetBool("Death", isDead);
     }
 
@@ -66,9 +68,9 @@ public class PlayerController : MonoBehaviour
     {
         StopAllCoroutines();
         if (isDead) return;
-        agent.stoppingDistance = stopDistance;
-        agent.isStopped = false;
-        agent.destination = target;
+        //agent.stoppingDistance = stopDistance;
+        //agent.isStopped = false;
+        //agent.destination = target;
     }
     public void EventAttack(GameObject target)
     {
@@ -82,15 +84,15 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator MoveToAttackTarget()
     {
-        agent.isStopped = false;
-        agent.stoppingDistance = characterStats.attackData.attackRange;
+        //agent.isStopped = false;
+        //agent.stoppingDistance = characterStats.attackData.attackRange;
         transform.LookAt(attackTarget.transform);
         while (Vector3.Distance(attackTarget.transform.position, transform.position) > characterStats.attackData.attackRange)
         {
-            agent.destination = attackTarget.transform.position;
+            //agent.destination = attackTarget.transform.position;
             yield return null;
         }
-        agent.isStopped = true;
+        //agent.isStopped = true;
 
         if(lastAttackTime < 0)
         {
