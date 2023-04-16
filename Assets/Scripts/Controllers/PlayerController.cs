@@ -5,34 +5,32 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    //private NavMeshAgent agent;//导航
     private Animator anim;//播放动画
     private CharacterStats characterStats;//属性
-    private GameObject attackTarget;//攻击目标
-    private float lastAttackTime;//攻击cd
     private bool isDead;//是否死亡
-    private float stopDistance;//最近距离
 
-    private float moveSpeed = 5f;
-    private float rotateSpeed = 5f;
-    private float jumpSpeed = 8f;
-    private bool isOnGround = true;
-    private Vector3 moveAmount;
-    Rigidbody rb;
+    [Header("Gravity")]
+    private float gravity = -9.81f;
+    private Vector3 playerVelocity;
+    [Header("OnGroundCheck")]
+    public bool isGround;
+    public float groundCheckRadius;
+    public Transform checkGround;
+    public LayerMask groundPlayer;
+    [Header("PlayerControl")]
+    private CharacterController controller;
+    public float speed = 5f;
+    public float jumpHeight;
 
     private void Awake()
     {
-        //agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
-        
-        //stopDistance = agent.stoppingDistance;
+        controller = GetComponent<CharacterController>();
     }
 
     private void OnEnable()
     {
-        MouseManager.Instance.OnMouseClicked += MoveToTarget;
-        MouseManager.Instance.OnEnemyClicked += EventAttack;
         GameManager.Instance.RigisterPlayer(characterStats);
     }
 
@@ -41,88 +39,50 @@ public class PlayerController : MonoBehaviour
         SaveManager.Instance.LoadPlayerData();
     }
 
-    private void OnDisable()
-    {
-        if (!MouseManager.IsInitialized) return;
-        MouseManager.Instance.OnMouseClicked -= MoveToTarget;
-        MouseManager.Instance.OnEnemyClicked -= EventAttack;
-    }
-
     private void Update()
     {
-        isDead = (characterStats.CurrentHealth == 0);
-        if (isDead)
-            GameManager.Instance.NotifyObservers();
-
+        CheckPlayerCondition();
         SwitchAnimation();
-        lastAttackTime -= Time.deltaTime;
+        PlayerPhysics();
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+        controller.Move(moveDir * speed * Time.deltaTime);
+        if (Input.GetButtonDown("Jump") && isGround)
+        {
+            playerVelocity.y = Mathf.Sqrt(-gravity * 2f * jumpHeight);
+        }
     }
-    public void SwitchAnimation()
+
+    private void PlayerPhysics()
+    {
+        playerVelocity.y += gravity * Time.deltaTime;
+        isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
+        if (isGround && playerVelocity.y < 0)
+        {
+            playerVelocity.y = -2f;
+        }
+        controller.Move(playerVelocity * Time.deltaTime);
+    }
+
+    private void CheckPlayerCondition()
+    {
+        if (isDead == false)
+        {
+            isDead = (characterStats.CurrentHealth == 0);
+        }
+        if (isDead == true)
+        {
+            GameManager.Instance.NotifyObservers();
+        }
+    }
+
+    private void SwitchAnimation()
     {
         //anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
         anim.SetBool("Death", isDead);
     }
 
-
-    public void MoveToTarget(Vector3 target)
-    {
-        StopAllCoroutines();
-        if (isDead) return;
-        //agent.stoppingDistance = stopDistance;
-        //agent.isStopped = false;
-        //agent.destination = target;
-    }
-    public void EventAttack(GameObject target)
-    {
-        if (isDead) return;
-        if(target != null)
-        {
-            attackTarget = target;
-            characterStats.isCritical = UnityEngine.Random.value < characterStats.attackData.criticalChance;
-            StartCoroutine(MoveToAttackTarget());
-        }
-    }
-    IEnumerator MoveToAttackTarget()
-    {
-        //agent.isStopped = false;
-        //agent.stoppingDistance = characterStats.attackData.attackRange;
-        transform.LookAt(attackTarget.transform);
-        while (Vector3.Distance(attackTarget.transform.position, transform.position) > characterStats.attackData.attackRange)
-        {
-            //agent.destination = attackTarget.transform.position;
-            yield return null;
-        }
-        //agent.isStopped = true;
-
-        if(lastAttackTime < 0)
-        {
-            anim.SetBool("Critical", characterStats.isCritical);
-            anim.SetTrigger("Attack");
-            //reset attack CD
-            lastAttackTime = characterStats.attackData.coolDown;
-        }
-    }
-
-    //Animation Event
-    void Hit()
-    {
-        if (attackTarget.CompareTag("Attackable"))
-        {
-            if (attackTarget.GetComponent<Rock>() && attackTarget.GetComponent<Rock>().rockState == Rock.RockStates.HitNothing)
-            {
-                attackTarget.GetComponent<Rock>().rockState = Rock.RockStates.HitEnemy;
-
-                attackTarget.GetComponent<Rigidbody>().velocity = Vector3.one;
-                attackTarget.GetComponent<Rigidbody>().AddForce(transform.forward * 20,ForceMode.Impulse);
-            }
-        }
-        else
-        {
-            var targetStats = attackTarget.GetComponent<CharacterStats>();
-
-            targetStats.TakeDamage(characterStats, targetStats);
-        }
-    }
     //和血量相关的函数
     //被人类捕捉||被汽车撞到
     void GetCaptured(Collider other)
