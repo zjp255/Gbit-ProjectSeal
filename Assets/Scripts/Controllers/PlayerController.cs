@@ -19,11 +19,11 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundPlayer;
     [Header("PlayerControl")]
     private CharacterController controller;
-    public float speed = 5f;        //水平移动速度
-    public float jumpHeight;        //最高点高度
-    private float curJumpHeight;    //当前最高点高度
-    public float heightReduceFactor;//最高点高度衰减系数
-    public float jumpLowerLimit;    //弹跳的最低高度
+    public float speed = 5f;                //水平移动速度
+    public float jumpHeight = 5f;           //最高点高度
+    private float curJumpHeight;            //当前最高点高度
+    public float heightReduceFactor = 0.05f;//最高点高度衰减系数
+    public float jumpLowerLimit = 0.5f;     //弹跳的最低高度
     private bool isJumpping = false;
 
     private void Awake()
@@ -44,7 +44,6 @@ public class PlayerController : MonoBehaviour
         SaveManager.Instance.LoadPlayerData();
     }
 
-    // 还没有设置转方向的事情/////////////////////////////////
     private void Update()
     {
         CheckPlayerCondition();
@@ -64,6 +63,8 @@ public class PlayerController : MonoBehaviour
                 float horizontal = Input.GetAxis("Horizontal");
                 float vertical = Input.GetAxis("Vertical");
                 Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+                Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
+                transform.rotation = Quaternion.LookRotation(targetDir);
                 controller.Move(moveDir * speed * Time.deltaTime);
             }
             else
@@ -78,7 +79,19 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     //当跳跃高度小于设定的最小值，小海豹水平移动
-                    controller.Move(transform.forward * speed * Time.deltaTime);
+                    float horizontal = Input.GetAxis("Horizontal");
+                    float vertical = Input.GetAxis("Vertical");
+                    if(horizontal != 0 || vertical != 0)
+                    {
+                        Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+                        Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
+                        transform.rotation = Quaternion.LookRotation(targetDir);
+                        controller.Move(moveDir * speed * Time.deltaTime);
+                    }
+                    else
+                    {
+                        controller.Move(transform.forward * speed * Time.deltaTime);
+                    }
                 }
             }
         }
