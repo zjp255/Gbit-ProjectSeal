@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
         if (isGround && playerVelocity.y < 0)
         {
-            playerVelocity.y = -2f;
+            playerVelocity.y = 0f;
         }
         controller.Move(playerVelocity * Time.deltaTime);
     }

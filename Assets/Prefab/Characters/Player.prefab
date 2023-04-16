@@ -2018,7 +2018,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   speed: 5
-  jumpHeight: 5
+  jumpHeight: 2
 --- !u!114 &6876266028851343428
 MonoBehaviour:
   m_ObjectHideFlags: 0
