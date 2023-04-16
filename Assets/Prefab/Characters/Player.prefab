@@ -2011,6 +2011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b2167acc8e8f0c49b5f0165b90caf7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gravity: -40
   isGround: 0
   groundCheckRadius: 0.4
   checkGround: {fileID: 2621953770209207856}
@@ -2018,7 +2019,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   speed: 5
-  jumpHeight: 2
+  jumpHeight: 5
 --- !u!114 &6876266028851343428
 MonoBehaviour:
   m_ObjectHideFlags: 0

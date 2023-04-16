@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private bool isDead;// «∑ÒÀ¿Õˆ
 
     [Header("Gravity")]
-    private float gravity = -9.81f;
+    public float gravity = -9.81f;
     private Vector3 playerVelocity;
     [Header("OnGroundCheck")]
     public bool isGround;
@@ -44,13 +44,16 @@ public class PlayerController : MonoBehaviour
         CheckPlayerCondition();
         SwitchAnimation();
         PlayerPhysics();
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
-        controller.Move(moveDir * speed * Time.deltaTime);
         if (Input.GetButtonDown("Jump") && isGround)
         {
             playerVelocity.y = Mathf.Sqrt(-gravity * 2f * jumpHeight);
+        }
+        if (!isGround)
+        {
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+            controller.Move(moveDir * speed * Time.deltaTime);
         }
     }
 
