@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Human.meta
 guid: f76a84fbbaa859842b47a5a39e23c549
+========
+guid: 48c19ff57a6e7344e8f0dcd73e44e323
+>>>>>>>> 0e5a56c297d30488dfff7bd38bc0bd2d695b3f2d:Assets/Scenes/Level1.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
