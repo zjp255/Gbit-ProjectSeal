@@ -9,11 +9,12 @@ TagManager:
   - Attackable
   - Protal
   - Item
+  - bed
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - Player

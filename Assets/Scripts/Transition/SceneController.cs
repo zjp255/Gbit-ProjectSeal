@@ -41,7 +41,7 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
     IEnumerator Transition(string sceneName,TransitionDestination.DestinationTag destinationTag)
     {
         SaveManager.Instance.SavePlayerData();
-        InventoryManager.Instance.SaveData();
+        //InventoryManager.Instance.SaveData();
 
         if (SceneManager.GetActiveScene().name != sceneName)
         {
@@ -87,7 +87,7 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
 
     public void TransitionToFirstLevel()
     {
-        StartCoroutine(LoadLevel("Forest"));
+        StartCoroutine(LoadLevel("Level1"));
     }
 
     IEnumerator LoadLevel(string scene)
@@ -95,12 +95,11 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
         SceneFader fade = Instantiate(sceneFaderPrefab);
         if(scene != "")
         {
-            yield return StartCoroutine(fade.FadeOut(2f));
+            yield return StartCoroutine(fade.FadeOut(1f));
             yield return SceneManager.LoadSceneAsync(scene);
             yield return player = Instantiate(playerPrefab, GameManager.Instance.GetEntrance().position, GameManager.Instance.GetEntrance().rotation);
-            
             SaveManager.Instance.SavePlayerData();
-            InventoryManager.Instance.SaveData();
+            //InventoryManager.Instance.SaveData();
             yield return StartCoroutine(fade.FadeIn(1f));
             yield break;
         }
