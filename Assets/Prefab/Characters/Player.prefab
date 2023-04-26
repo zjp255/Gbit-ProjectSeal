@@ -1952,8 +1952,8 @@ GameObject:
   - component: {fileID: 4882589002999348314}
   - component: {fileID: 6876266027369362677}
   - component: {fileID: 6876266028851343428}
-  - component: {fileID: 2621953770071580845}
   - component: {fileID: 4882589003008724961}
+  - component: {fileID: 237468503244480240}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -1968,8 +1968,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4882589003008724966}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -16.392, y: 0, z: -31.91}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4882589003009217076}
@@ -1979,7 +1979,7 @@ Transform:
   - {fileID: 7876840491762737343}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!95 &4882589002999348314
 Animator:
   serializedVersion: 3
@@ -2011,15 +2011,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b2167acc8e8f0c49b5f0165b90caf7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -40
+  gravity: -9.8
   isGround: 0
-  groundCheckRadius: 0.4
+  groundCheckRadius: 0.05
   checkGround: {fileID: 2621953770209207856}
   groundPlayer:
     serializedVersion: 2
     m_Bits: 8
   speed: 5
-  jumpHeight: 5
+  jumpHeight: 3
   heightReduceFactor: 0.05
   jumpLowerLimit: 0.5
 --- !u!114 &6876266028851343428
@@ -2039,20 +2039,6 @@ MonoBehaviour:
   attackData: {fileID: 11400000, guid: 92ebff598a59e4843a8dd0344ff71c6c, type: 2}
   weaponSlot: {fileID: 4882589003009217078}
   isCritical: 0
---- !u!64 &2621953770071580845
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4882589003008724966}
-  m_Material: {fileID: 13400000, guid: c9f3f811a03a0d1489331c40d8f00a5f, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 0
-  m_Mesh: {fileID: 4300004, guid: a58d63122b09e9144938cd6a1ece4824, type: 3}
 --- !u!143 &4882589003008724961
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2070,7 +2056,21 @@ CharacterController:
   m_StepOffset: 0.2
   m_SkinWidth: 0.035
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.55, z: 0}
+  m_Center: {x: 0, y: 0.68, z: 0}
+--- !u!136 &237468503244480240
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4882589003008724966}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.35
+  m_Height: 1.3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.68, z: 0}
 --- !u!1 &4882589003008724968
 GameObject:
   m_ObjectHideFlags: 0

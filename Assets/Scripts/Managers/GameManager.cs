@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
         if(camera != null)
         {
             camera.Follow = playerStats.transform.GetChild(2);
-            camera.LookAt = playerStats.transform.GetChild(2);
+            //camera.LookAt = playerStats.transform.GetChild(2);
         }
     }
 
