@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
                 // 滞空时，可以用方向键控制水平移动
                 float horizontal = Input.GetAxis("Horizontal");
                 float vertical = Input.GetAxis("Vertical");
-                Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+                Vector3 moveDir = new Vector3(vertical, 0, horizontal);
                 Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
                 transform.rotation = Quaternion.LookRotation(targetDir);
                 controller.Move(moveDir * speed * Time.deltaTime);
