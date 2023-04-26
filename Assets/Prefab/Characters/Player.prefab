@@ -2011,9 +2011,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b2167acc8e8f0c49b5f0165b90caf7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -40
+  gravity: -9.8
   isGround: 0
-  groundCheckRadius: 0.4
+  groundCheckRadius: 0.05
   checkGround: {fileID: 2621953770209207856}
   groundPlayer:
     serializedVersion: 2
@@ -2056,7 +2056,7 @@ CharacterController:
   m_StepOffset: 0.2
   m_SkinWidth: 0.035
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.55, z: 0}
+  m_Center: {x: 0, y: 0.68, z: 0}
 --- !u!136 &237468503244480240
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2067,10 +2067,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.36
-  m_Height: 1.42
+  m_Radius: 0.35
+  m_Height: 1.3
   m_Direction: 1
-  m_Center: {x: 0, y: 0.61, z: 0}
+  m_Center: {x: 0, y: 0.68, z: 0}
 --- !u!1 &4882589003008724968
 GameObject:
   m_ObjectHideFlags: 0
