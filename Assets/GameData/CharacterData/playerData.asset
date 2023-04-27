@@ -16,6 +16,10 @@ MonoBehaviour:
   currentHealth: 100
   baseDefence: 2
   currentDefence: 2
+  angerNum: 40
+  dirtyNum: 0
+  bloodNum: 0
+  isDead: 0
   killPoint: 0
   currentLevel: 1
   maxLevel: 30
