@@ -19,6 +19,8 @@ public class CharacterStats : MonoBehaviour
     [HideInInspector]
     public bool isCritical;
     public event Action<int> OnAngerChanged;
+    public event Action<int> OnBloodChanged;
+    public event Action<float> OnDirtyChanged;
 
     private void Awake()
     {
@@ -41,15 +43,25 @@ public class CharacterStats : MonoBehaviour
             OnAngerChanged?.Invoke(characterData.angerNum);
         }
     }
-    public int DirtyNum
+    public float DirtyNum
     {
         get { return characterData != null ? characterData.dirtyNum : 0; }
-        set { characterData.dirtyNum = value; }
+        set {
+            if (value < Const.DIRTY_MIN) characterData.dirtyNum = Const.DIRTY_MIN;
+            else if (value > Const.DIRTY_MAX) characterData.dirtyNum = Const.DIRTY_MAX;
+            else characterData.dirtyNum = value;
+            OnDirtyChanged?.Invoke(characterData.dirtyNum); 
+        }
     }
     public int BloodNum
     {
         get { return characterData != null ? characterData.bloodNum : 0; }
-        set { characterData.bloodNum = value; }
+        set {
+            if (value < Const.BLOOD_MIN) characterData.bloodNum = Const.BLOOD_MIN;
+            else if (value > Const.BLOOD_MAX) characterData.bloodNum = Const.BLOOD_MAX;
+            else characterData.bloodNum = value;
+            OnBloodChanged?.Invoke(characterData.bloodNum);
+        }
     }
     public bool IsDead
     {
