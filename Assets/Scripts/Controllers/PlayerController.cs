@@ -25,7 +25,8 @@ public class PlayerController : MonoBehaviour
     private float curJumpHeight;            //当前最高点高度
     public float heightReduceFactor = 0.05f;//最高点高度衰减系数
     public float jumpLowerLimit = 0.5f;     //弹跳的最低高度
-    private bool isJumpping = false;
+    private bool isJumpping = false;        //是否处于弹跳状态
+    private bool isSliding = false;         //是否处于滑行状态
     private int inputFrames = 0;
     public GameObject angerUIPrefab;
 
@@ -52,52 +53,102 @@ public class PlayerController : MonoBehaviour
         CheckPlayerCondition();
         SwitchAnimation();
         SimulatePhysics();
-        // 静止状态，在地面上
-        if (!isJumpping && isGround)
+        tryToJump();
+        applyJump();
+        applySlide();
+    }
+
+    private void CheckPlayerCondition()
+    {
+        if (isDead == false)
+        {
+            isDead = (characterStats.CurrentHealth == 0);
+        }
+        if (isDead == true)
+        {
+            GameManager.Instance.NotifyObservers();
+        }
+    }
+
+    private void SwitchAnimation()
+    {
+        //anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
+        anim.SetBool("Death", isDead);
+    }
+
+    private void SimulatePhysics()
+    {
+        playerVelocity.y += gravity * Time.deltaTime;
+        isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
+        if (isGround && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
+        }
+        controller.Move(playerVelocity * Time.deltaTime);
+    }
+    
+    private bool tryJumpWhenStill()
+    {
+        // 静止在地面上，准备起跳第一次
+        return !isJumpping && !isSliding && isGround;
+    }
+
+    private bool tryJumpWhenSlide()
+    {
+        return !isJumpping && isSliding && isGround;
+    }
+
+    private void tryToJump()
+    {
+        if (tryJumpWhenStill() || tryJumpWhenSlide())
         {
             if (Input.GetButton("Jump"))
             {
                 inputFrames++;
             }
             if (Input.GetButtonUp("Jump"))
-            {       
-                int num = 0;
-                //isJumpping = true;
-                // 长按超过100帧的计数全部释放
+            {
                 if (inputFrames >= 100)
-                {
-                    if(characterStats.AngerNum < Const.ANGER_UNIT)
-                    {
-                        Debug.Log("不足一格，不能释放");
-                    }
-                    else
-                    {
-                        num = characterStats.AngerNum / Const.ANGER_UNIT;
-                        characterStats.AngerNum %= Const.ANGER_UNIT;
-                        isJumpping = true;
-                        curJumpHeight = Const.ANGER_HEIGHT[num];
-                    }
-                }
-                // 短按释放1格
+                    JumpWithAllAnger();     // 长按超过100帧的计数全部释放
                 else
-                {
-                    if(characterStats.AngerNum < Const.ANGER_UNIT)
-                    {
-                        Debug.Log("不足一格，不能释放");
-                    }
-                    else
-                    {
-                        num = 1;
-                        characterStats.AngerNum -= Const.ANGER_UNIT;
-                        isJumpping = true;
-                        curJumpHeight = Const.ANGER_HEIGHT[num];
-                    }
-                }
+                    JumpWithUnitAnger();    // 短按释放1格
                 inputFrames = 0;
+                isJumpping = true;
+                isSliding = false;
             }
         }
-        // 起跳状态
-        if (isJumpping)
+    }
+
+    private void JumpWithAllAnger()
+    {
+        if (characterStats.AngerNum < Const.ANGER_UNIT)
+        {
+            Debug.Log("不足一格，不能释放");
+        }
+        else
+        {
+            int num = characterStats.AngerNum / Const.ANGER_UNIT;
+            characterStats.AngerNum %= Const.ANGER_UNIT;
+            curJumpHeight = Const.ANGER_HEIGHT[num];
+        }
+    }
+
+    private void JumpWithUnitAnger()
+    {
+        if (characterStats.AngerNum < Const.ANGER_UNIT)
+        {
+            Debug.Log("不足一格，不能释放");
+        }
+        else
+        {
+            characterStats.AngerNum -= Const.ANGER_UNIT;
+            curJumpHeight = Const.ANGER_HEIGHT[1];
+        }
+    }
+
+    private void applyJump()
+    {
+        if (isJumpping && !isSliding)
         {
             if (!isGround)
             {
@@ -121,51 +172,31 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     //当跳跃高度小于设定的最小值，小海豹水平移动
-                    float horizontal = Input.GetAxis("Horizontal");
-                    float vertical = Input.GetAxis("Vertical");
-                    if (horizontal != 0 || vertical != 0)
-                    {
-                        Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
-                        Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
-                        transform.rotation = Quaternion.LookRotation(targetDir);
-                        controller.Move(moveDir * speed * Time.deltaTime);
-                    }
-                    else
-                    {
-                        controller.Move(transform.forward * speed * Time.deltaTime);
-                    }
+                    isJumpping = false;
+                    isSliding = true;
                 }
             }
         }
     }
 
-    private void SimulatePhysics()
+    private void applySlide()
     {
-        playerVelocity.y += gravity * Time.deltaTime;
-        isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
-        if (isGround && playerVelocity.y < 0)
+        if(!isJumpping && isSliding && isGround)
         {
-            playerVelocity.y = 0f;
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            if (horizontal != 0 || vertical != 0)
+            {
+                Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
+                Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
+                transform.rotation = Quaternion.LookRotation(targetDir);
+                controller.Move(moveDir * speed * Time.deltaTime);
+            }
+            else
+            {
+                controller.Move(transform.forward * speed * Time.deltaTime);
+            }
         }
-        controller.Move(playerVelocity * Time.deltaTime);
-    }
-
-    private void CheckPlayerCondition()
-    {
-        if (isDead == false)
-        {
-            isDead = (characterStats.CurrentHealth == 0);
-        }
-        if (isDead == true)
-        {
-            GameManager.Instance.NotifyObservers();
-        }
-    }
-
-    private void SwitchAnimation()
-    {
-        //anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
-        anim.SetBool("Death", isDead);
     }
 
     //和血量相关的函数
