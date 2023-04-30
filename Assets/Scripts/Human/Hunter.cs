@@ -2,11 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum E_hunterType
+{ 
+    normal,//正常的猎人
+    car//车上下来的猎人
+}
+
 public class Hunter : Human
 {
+    [Header("Hunter")]
+    public E_hunterType hunterType = E_hunterType.normal;
+    private int loopCount = 0;
+
     [Header("逮捕")]
     public float arrestSpeed;//抓捕速度
     public float outRange;//放弃抓捕范围
+
+    [Header("LoseSight")]
+    private Vector3 playerMissPoint;//player被建筑物遮挡前的点
+    private int changeDirCount = 0;
+    Vector3 lookAtLeft;
+    Vector3 lookAtRight;
 
     [Header("视野")]
     public float sightR;//视野范围半径
@@ -35,6 +51,11 @@ public class Hunter : Human
         //angle_rightTan = (180 - sightAngle) / 2 / 180  * Mathf.PI;
         //angle_leftTan = ((180 - sightAngle) / 2 + sightAngle) / 180 * Mathf.PI;
 
+        if (hunterType == E_hunterType.car)
+        {
+            warningPoint = 100;
+        }
+
     }
 
     // Update is called once per frame
@@ -46,6 +67,10 @@ public class Hunter : Human
             {
                 case E_HumanStatus.idle:
                     getNextPatrolPoint();
+                    if (hunterType == E_hunterType.car && nextPatrolPoint == 0)
+                    {
+                        loopCount++;
+                    }
                     break;
                 case E_HumanStatus.patrol:
                     inPatrol();
@@ -55,6 +80,12 @@ public class Hunter : Human
                     break;
                 case E_HumanStatus.arrest:
                     inArrest();
+                    break;
+                case E_HumanStatus.loseSight1:
+                    inLoseSight1();
+                    break;
+                case E_HumanStatus.loseSight2:
+                    inLoseSight2();
                     break;
                 case E_HumanStatus.backPatrol:
                     inBackPatrol();
@@ -84,6 +115,7 @@ public class Hunter : Human
             Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
             if (hit.transform.tag == "Player")
             {
+                
                 return true;
             }
         }
@@ -98,6 +130,10 @@ public class Hunter : Human
     public void inPatrol()
     {
         moveAtPatrol();
+        if (loopCount == 2 && hunterType == E_hunterType.car)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
         if (playerIsInRange())
         {
             status = E_HumanStatus.warning;
@@ -105,7 +141,7 @@ public class Hunter : Human
     }
     #endregion
 
-    #region Warning
+    #region Warning//警觉相关
     /// <summary>
     /// 在警戒状态下的行动
     /// </summary>
@@ -159,7 +195,7 @@ public class Hunter : Human
 
     }
 
-    #region WarningStrip
+    #region WarningStrip//警戒条相关
 
     /// <summary>
     /// 控制警戒条的UI
@@ -200,11 +236,82 @@ public class Hunter : Human
         Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
         if (Vector3.Distance(transform.position, player.transform.position) > outRange || hit.transform.tag != "Player")
         {
-            status = E_HumanStatus.backPatrol;
+            playerMissPoint = player.transform.position;
+            status = E_HumanStatus.loseSight1;
         }
     }
 
     #endregion
+
+    #region LoseSight//丢失玩家视野后的行为
+    void inLoseSight1()
+    {
+        moveAtLoseSight1();
+        if (playerIsInRange())
+        {
+            status = E_HumanStatus.arrest;
+        }
+    }
+
+    void moveAtLoseSight1()
+    {
+        if (    playerMissPoint.x + 0.1 > transform.position.x &&
+                playerMissPoint.x - 0.1 < transform.position.x &&
+                playerMissPoint.z + 0.1 > transform.position.z &&
+                playerMissPoint.z - 0.1 < transform.position.z
+                )
+        {
+            status = E_HumanStatus.loseSight2;
+            lookAtRight = transform.TransformPoint(new Vector3(2, 0, 2));
+            lookAtLeft =   transform.TransformPoint(new Vector3(-2, 0, 2));
+        }
+        else
+        {
+            //gameObject.transform.forward = new Vector3(patrolPointS[nextPatrolPoint].x - transform.position.x, 0, patrolPointS[nextPatrolPoint].z - transform.position.z);
+            //characterController.SimpleMove(transform.forward * patrolSpeed);
+            move(playerMissPoint, patrolSpeed);
+            //RaycastHit hit;
+            //if(Physics.Raycast(new Ray(transform.position, transform.TransformPoint(transform.forward)), out hit, outRange, 1 << 0) && hit.transform.tag != "Player" )
+            //{
+            //    status = E_HumanStatus.loseSight2;
+            //    lookAtRight = transform.TransformPoint(new Vector3(2, 0, -2));
+            //    lookAtLeft = transform.TransformPoint(new Vector3(-2, 0, -2));
+
+            //}
+        }
+    }
+
+    void inLoseSight2()
+    {
+        moveAtLoseSight2();
+        if (playerIsInRange())
+        {
+            status = E_HumanStatus.arrest;
+        }
+    }
+
+    void moveAtLoseSight2()
+    {
+        if (changeDirCount == 0)
+        {
+            changeDir(lookAtRight);
+            if (isTurning == false)
+            {
+                changeDirCount++;
+            }
+        }
+        else if(changeDirCount == 1) 
+        {
+            changeDir(lookAtLeft);
+            if (isTurning == false)
+            {
+                status = E_HumanStatus.backPatrol;
+                changeDirCount = 0;
+            }
+        }
+    }
+    #endregion
+
 
     #region BackPatrol
     /// <summary>
@@ -226,8 +333,12 @@ public class Hunter : Human
                 patrolPointS[nextPatrolPoint].z + 0.1 > transform.position.z &&
                 patrolPointS[nextPatrolPoint].z - 0.1 < transform.position.z
                 )
-        {
-            status = E_HumanStatus.idle;
+        {        
+                status = E_HumanStatus.idle;
+            if (hunterType == E_hunterType.car)
+            {
+                GameObject.Destroy(this.gameObject);
+            }
         }
         else
         {
@@ -238,7 +349,9 @@ public class Hunter : Human
     }
     #endregion
 
-    #region aware
+
+
+    #region aware//从眩晕中苏醒
     void aware()
     {
         sightR += addSightR;
