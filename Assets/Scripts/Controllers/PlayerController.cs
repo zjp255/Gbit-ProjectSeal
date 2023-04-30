@@ -53,9 +53,9 @@ public class PlayerController : MonoBehaviour
         CheckPlayerCondition();
         SwitchAnimation();
         SimulatePhysics();
-        tryToJump();
-        applyJump();
-        applySlide();
+        TryToJump();
+        ApplyJump();
+        ApplySlide();
     }
 
     private void CheckPlayerCondition()
@@ -81,15 +81,17 @@ public class PlayerController : MonoBehaviour
                     anim.SetBool("isJumpUp", true);
                     anim.SetBool("isFallDown", false);
                     anim.SetBool("isSlide", false);
+                    anim.SetTrigger("JumpUp");
                 }
             }
             else
             {
                 if(anim.GetBool("isFallDown") == false)
                 {
-                    anim.SetBool("isJumpUp", false);
                     anim.SetBool("isFallDown", true);
+                    anim.SetBool("isJumpUp", false);
                     anim.SetBool("isSlide", false);
+                    anim.SetTrigger("FallDown");
                 }
             }
         }
@@ -99,9 +101,10 @@ public class PlayerController : MonoBehaviour
             {
                 if (anim.GetBool("isSlide") == false)
                 {
+                    anim.SetBool("isSlide", true);
                     anim.SetBool("isJumpUp", false);
                     anim.SetBool("isFallDown", false);
-                    anim.SetBool("isSlide", true);
+                    anim.SetTrigger("Slide");
                 }
             }
         }
@@ -118,20 +121,20 @@ public class PlayerController : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
     }
     
-    private bool tryJumpWhenStill()
+    private bool TryJumpWhenStill()
     {
         // 静止在地面上，准备起跳第一次
         return !isJumpping && !isSliding && isGround;
     }
 
-    private bool tryJumpWhenSlide()
+    private bool TryJumpWhenSlide()
     {
         return !isJumpping && isSliding && isGround;
     }
 
-    private void tryToJump()
+    private void TryToJump()
     {
-        if (tryJumpWhenStill() || tryJumpWhenSlide())
+        if (TryJumpWhenStill() || TryJumpWhenSlide())
         {
             if (Input.GetButton("Jump"))
             {
@@ -140,9 +143,20 @@ public class PlayerController : MonoBehaviour
             if (Input.GetButtonUp("Jump"))
             {
                 if (inputFrames >= 100)
+                {
                     JumpWithAllAnger();     // 长按超过100帧的计数全部释放
+                }
                 else
-                    JumpWithUnitAnger();    // 短按释放1格
+                {
+                    if (TryJumpWhenStill())
+                    {
+                        JumpWithNoAnger();      // 第一次起跳不消耗蓄力条
+                    }
+                    else
+                    {
+                        JumpWithUnitAnger();    // 短按释放1格
+                    }
+                }
                 inputFrames = 0;
                 isJumpping = true;
                 isSliding = false;
@@ -177,7 +191,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void applyJump()
+    private void JumpWithNoAnger()
+    {
+        curJumpHeight = Const.ANGER_HEIGHT[1];
+    }
+
+    private void ApplyJump()
     {
         if (isJumpping && !isSliding)
         {
@@ -210,7 +229,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void applySlide()
+    private void ApplySlide()
     {
         if(!isJumpping && isSliding && isGround)
         {
