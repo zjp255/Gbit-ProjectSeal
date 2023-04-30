@@ -25,9 +25,13 @@ public class PlayerController : MonoBehaviour
     private float curJumpHeight;            //当前最高点高度
     public float heightReduceFactor = 0.05f;//最高点高度衰减系数
     public float jumpLowerLimit = 0.5f;     //弹跳的最低高度
+    public float jumpOnHuman = 0.44f;       //跳人增幅
+    public float jumpOnCar = 0.3f;          //跳车增幅
+    public float jumpOnProps = 0.44f;        //跳道具增幅
     private bool isJumpping = false;        //是否处于弹跳状态
     private bool isSliding = false;         //是否处于滑行状态
     private int inputFrames = 0;
+    private float propsTime = 0f;           //道具持续时间
     public GameObject angerUIPrefab;
 
     private void Awake()
@@ -50,13 +54,15 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        CheckPlayerCondition();
-        SwitchAnimation();
-        SimulatePhysics();
-        tryToJump();
-        applyJump();
+        CheckPlayerCondition(); //判断死亡
+        SwitchAnimation();      //动画切换
+        SimulatePhysics();      //模拟重力
+        tryToJump();            //跳跃
+        applyJump();            //跳跃切滑行
         applySlide();
+        CheckSpeed();       
     }
+
 
     private void CheckPlayerCondition()
     {
@@ -248,28 +254,33 @@ public class PlayerController : MonoBehaviour
     }
     //被污染物毒害：触碰一次污染槽涨一格，满三格后死亡
     //道具
+    private void CheckSpeed()
+    {
+        propsTime += Time.deltaTime;
+        if (propsTime > 5)
+        {
+            speed = 5;
+        }
+    }
     void OnTriggerEnter(Collider other)
     {
-        //TODO:jump相关还没写
-
         //碰到物体 检测tag
-        //床：bed 帐篷：tent 神奇小鱼：fish 海豹玩偶：toy 滑板车：scooter
 
         //帐篷：跳跃增幅20%，蓄力值+1，使用后变成bed
         if (other.gameObject.tag.CompareTo("tent") == 0)
         {
             Debug.Log("触发道具：帐篷");
-            curJumpHeight = curJumpHeight * (1 + 0.8f);
-            characterStats.characterData.angerNum++;//蓄力值+1
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//蓄力值+1
             other.gameObject.SetActive(false);//隐藏物体
-            //other.gameObject.tag = "bed";
+            other.gameObject.tag = "tent_disable";
         }
         //床：跳跃增幅20%，蓄力值+1，使用后变成bed_disable
         if (other.gameObject.tag.CompareTo("bed") == 0)
         {
             Debug.Log("触发道具：床");
-            curJumpHeight = curJumpHeight * (1 + 0.8f);
-            characterStats.characterData.angerNum++;//蓄力值+1
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//蓄力值+1
             other.gameObject.tag = "bed_disable";
             Debug.Log("道具触发结束");
         }
@@ -281,9 +292,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("fish") == 0)
         {
             Debug.Log("触发道具：神奇小鱼");
-            curJumpHeight = curJumpHeight * (1 + 0.9f);
-            //TODO:水平
-            characterStats.characterData.dirtyNum = 0;//污染条清零
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//蓄力值+1
+            propsTime = 0;
+            speed = speed*(1+ jumpOnProps);
+            characterStats.DirtyNum = 0;//污染条清零
             other.gameObject.SetActive(false);//隐藏物体
             Debug.Log("道具触发结束，消失");
         }
@@ -291,23 +304,29 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("toy") == 0)
         {
             Debug.Log("触发道具：海豹玩偶");
-            characterStats.characterData.bloodNum++;//血条+1
+            characterStats.BloodNum++;//血条+1
             other.gameObject.SetActive(false);//隐藏物体
             Debug.Log("道具触发结束，消失");
         }
-        //TODO：这两个怎么判定是击中还是捕捉
         //人类：速度增益20 %
-        if (other.gameObject.tag.CompareTo("human") == 0)
+        if (other.gameObject.tag.CompareTo("human_h1") == 0)
         {
-            Debug.Log("触发道具：人类");
-            curJumpHeight = curJumpHeight * (1 + 0.2f);
-            Debug.Log("道具触发结束，消失");
+            Debug.Log("触发道具：普通人类");
+            curJumpHeight = curJumpHeight * (1 + jumpOnHuman);
+            characterStats.AngerNum++;//蓄力值+1
+        }
+        if (other.gameObject.tag.CompareTo("human_h2") == 0)
+        {
+            Debug.Log("触发道具：狂暴人类");
+            curJumpHeight = curJumpHeight * (1 + jumpOnHuman);
+            characterStats.AngerNum+=3;//蓄力值+3
         }
         //篷车：速度增益30 %，使用一次后篷车移速减慢，使用两次后篷车停下，走出狂暴人类
         if (other.gameObject.tag.CompareTo("car") == 0)
         {
             Debug.Log("触发道具：篷车");
-            curJumpHeight = curJumpHeight * (1 + 0.3f);
+            curJumpHeight = curJumpHeight * (1 + jumpOnCar);
+            characterStats.AngerNum+=4;//蓄力值+4
             Debug.Log("道具触发结束，消失");
         }
         //MonoBehaviour.OnTriggerEnter(Collider other)//当进入触发器
