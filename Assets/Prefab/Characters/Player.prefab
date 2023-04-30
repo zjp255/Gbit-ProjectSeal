@@ -2019,9 +2019,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   speed: 5
-  jumpHeight: 3
   heightReduceFactor: 0.05
   jumpLowerLimit: 0.5
+  angerUIPrefab: {fileID: 6872390045205359670, guid: 99ab873b933276d4d8eba0be7034407f, type: 3}
 --- !u!114 &6876266028851343428
 MonoBehaviour:
   m_ObjectHideFlags: 0

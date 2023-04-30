@@ -5,6 +5,7 @@ using Cinemachine;
 
 public class GameManager : Singleton<GameManager>
 {
+    [HideInInspector]
     public CharacterStats playerStats;
     private CinemachineVirtualCamera camera;
 
