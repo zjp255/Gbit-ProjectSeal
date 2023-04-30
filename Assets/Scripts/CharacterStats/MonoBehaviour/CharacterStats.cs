@@ -18,6 +18,7 @@ public class CharacterStats : MonoBehaviour
 
     [HideInInspector]
     public bool isCritical;
+    public event Action<int> OnAngerChanged;
 
     private void Awake()
     {
@@ -30,25 +31,29 @@ public class CharacterStats : MonoBehaviour
 
     #region Read from Data_SO
     //新的
-    public int angerNum
+    public int AngerNum
     {
-        get { return characterData != null ? characterData.angerNum : 0; }
-        set { characterData.angerNum = value; }
+        get { return characterData != null ? characterData.angerNum : Const.ANGER_MIN; }
+        set {
+            if (value < Const.ANGER_MIN) characterData.angerNum = Const.ANGER_MIN;
+            else if (value > Const.ANGER_MAX) characterData.angerNum = Const.ANGER_MAX;
+            else characterData.angerNum = value;
+            OnAngerChanged?.Invoke(characterData.angerNum);
+        }
     }
-    public int dirtyNum
+    public int DirtyNum
     {
         get { return characterData != null ? characterData.dirtyNum : 0; }
         set { characterData.dirtyNum = value; }
     }
-    public int bloodNum
+    public int BloodNum
     {
         get { return characterData != null ? characterData.bloodNum : 0; }
         set { characterData.bloodNum = value; }
     }
-    public bool ifDead
+    public bool IsDead
     {
-        get { return characterData != null ? characterData.ifDead : false; }
-        set { characterData.ifDead = value; }
+        get { return characterData != null ? characterData.CheckIsSealDead() : false; }
     }
     //下面是老的
     public int MaxHealth
