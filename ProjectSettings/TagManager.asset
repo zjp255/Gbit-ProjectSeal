@@ -14,6 +14,7 @@ TagManager:
   - tent
   - fish
   - toy
+  - tent_disable
   layers:
   - Default
   - TransparentFX

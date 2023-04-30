@@ -30,8 +30,10 @@ public class PlayerController : MonoBehaviour
     public float jumpOnProps = 0.44f;        //跳道具增幅
     private bool isJumpping = false;        //是否处于弹跳状态
     private bool isSliding = false;         //是否处于滑行状态
+    private bool isDirty = false;           //是否在污染池中
     private int inputFrames = 0;
     private float propsTime = 0f;           //道具持续时间
+    private float dirtyTime = 0f;           //在污染池中的时间
     public GameObject angerUIPrefab;
 
     private void Awake()
@@ -60,7 +62,7 @@ public class PlayerController : MonoBehaviour
         tryToJump();            //跳跃
         applyJump();            //跳跃切滑行
         applySlide();
-        CheckSpeed();       
+        CheckProps();       
     }
 
 
@@ -254,12 +256,18 @@ public class PlayerController : MonoBehaviour
     }
     //被污染物毒害：触碰一次污染槽涨一格，满三格后死亡
     //道具
-    private void CheckSpeed()
+    private void CheckProps()
     {
+        //道具持续时间
         propsTime += Time.deltaTime;
         if (propsTime > 5)
         {
             speed = 5;
+        }
+        //污染池
+        if(isDirty)
+        {
+            dirtyTime += Time.deltaTime;
         }
     }
     void OnTriggerEnter(Collider other)
@@ -329,9 +337,23 @@ public class PlayerController : MonoBehaviour
             characterStats.AngerNum+=4;//蓄力值+4
             Debug.Log("道具触发结束，消失");
         }
-        //MonoBehaviour.OnTriggerEnter(Collider other)//当进入触发器
-        //MonoBehaviour.OnTriggerExit(Collider other)//当退出触发器
-        //MonoBehaviour.OnTriggerStay(Collider other)//当逗留触发器
+        if(other.gameObject.tag.CompareTo("dirty_pool") == 0)
+        {
+            Debug.Log("进入污染池");
+            isDirty = true;
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if ((other.gameObject.tag.CompareTo("dirty_pool") == 0)&& isDirty)
+        {
+            characterStats.DirtyNum += (float)(0.1 *dirtyTime);
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        isDirty = false;
+        dirtyTime = 0;
     }
 
 
