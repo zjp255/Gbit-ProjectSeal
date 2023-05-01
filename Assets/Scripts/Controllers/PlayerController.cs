@@ -89,9 +89,7 @@ public class PlayerController : MonoBehaviour
             if (isDead == true)
             {
                 GameManager.Instance.NotifyObservers();
-                Debug.Log("gameover");
-                GameOver?.Invoke();
-                Debug.Log("gameover11");
+                //GameOver?.Invoke();
             }
         }   
     }
