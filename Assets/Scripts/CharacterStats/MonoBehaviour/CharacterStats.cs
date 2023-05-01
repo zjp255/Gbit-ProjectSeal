@@ -65,7 +65,8 @@ public class CharacterStats : MonoBehaviour
     }
     public bool IsDead
     {
-        get { return characterData != null ? characterData.CheckIsSealDead() : false; }
+        get { return characterData != null ? characterData.isDead : false; }
+
     }
     //下面是老的
     public int MaxHealth

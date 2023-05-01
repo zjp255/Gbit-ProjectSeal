@@ -48,19 +48,4 @@ public class CharacterData_SO : ScriptableObject
 
         Debug.Log("LEVEL UP!" + currentLevel + "Max Health:" + maxHealth);
     }
-    //À¿Õˆ≈–∂®
-    public bool CheckIsSealDead()
-    {
-        if(bloodNum < 0)
-        {
-            isDead = true;
-            Debug.Log("die because of being captured!!!!!");
-        }
-        if(dirtyNum == Const.DIRTY_MAX)
-        {
-            isDead = true;
-            Debug.Log("die because of being poisoned!!!!!");
-        }
-        return isDead;
-    }
 }
