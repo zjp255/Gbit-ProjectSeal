@@ -52,12 +52,12 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         GameManager.Instance.RigisterPlayer(characterStats);
-        Instantiate(angerUIPrefab);
     }
 
     private void Start()
     {
         SaveManager.Instance.LoadPlayerData();
+        Instantiate(angerUIPrefab);
     }
 
     private void Update()
@@ -89,9 +89,7 @@ public class PlayerController : MonoBehaviour
             if (isDead == true)
             {
                 GameManager.Instance.NotifyObservers();
-                Debug.Log("gameover");
-                GameOver?.Invoke();
-                Debug.Log("gameover11");
+                //GameOver?.Invoke();
             }
         }   
     }
