@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
     private float propsTime = 0f;           //��߳���ʱ��
     private float dirtyTime = 0f;           //����Ⱦ���е�ʱ��
     private bool isPlaying = true;
+    private int airTime = 0;
+    private Vector3 airPos;
 
     public GameObject angerUIPrefab;
     public Action GameOver;
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
         controller = GetComponent<CharacterController>();
+        airPos = checkGround.position;
     }
 
     private void OnEnable()
@@ -147,6 +150,34 @@ public class PlayerController : MonoBehaviour
     {
         playerVelocity.y += gravity * Time.deltaTime;
         isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
+        if (!isGround)
+        {
+            RaycastHit hit;
+            Vector3 origin = transform.position;
+            Vector3 direction = transform.TransformDirection(new Vector3(0, -1, 0));
+            if (Physics.Raycast(origin, direction, out hit, Mathf.Infinity, groundPlayer))
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0, -1, 0)));
+                if (Vector3.Distance(hit.transform.position, checkGround.position) > 0)
+                {
+                    if (airPos == checkGround.position)
+                    {
+                        airTime++;
+                    }
+                    else
+                    {
+                        airPos = checkGround.position;
+                        airTime = 0;
+                    }
+
+                    // 异常卡死情况
+                    if (airTime > 20)
+                    {
+                        isGround = true;
+                    }
+                }
+            }
+        }
         if (isGround && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
