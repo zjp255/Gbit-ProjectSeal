@@ -48,12 +48,12 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         GameManager.Instance.RigisterPlayer(characterStats);
-        Instantiate(angerUIPrefab);
     }
 
     private void Start()
     {
         SaveManager.Instance.LoadPlayerData();
+        Instantiate(angerUIPrefab);
     }
 
     private void Update()

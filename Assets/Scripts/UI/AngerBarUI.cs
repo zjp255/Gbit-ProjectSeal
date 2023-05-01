@@ -8,7 +8,7 @@ public class AngerBarUI : MonoBehaviour
 {
     public Image fillImage;
 
-    private void Awake()
+    private void Start()
     {
         UpdateUI(GameManager.Instance.playerStats.AngerNum);
     }
