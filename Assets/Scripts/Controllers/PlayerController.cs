@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private int inputFrames = 0;
     private float propsTime = 0f;           //��߳���ʱ��
     private float dirtyTime = 0f;           //����Ⱦ���е�ʱ��
+    //private bool isPaused = 
 
     public GameObject angerUIPrefab;
     public Action GameOver;
