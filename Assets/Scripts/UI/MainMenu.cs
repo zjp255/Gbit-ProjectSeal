@@ -35,7 +35,8 @@ public class MainMenu : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         //load forest scene
-        SceneController.Instance.TransitionToFirstLevel();
+        GameManager.Instance.curLevel = 1;
+        SceneController.Instance.TransitionToLevel(GameManager.Instance.curLevel);
     }
 
     void ContinueGame()
