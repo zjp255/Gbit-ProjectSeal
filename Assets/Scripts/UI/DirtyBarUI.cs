@@ -17,8 +17,8 @@ public class DirtyBarUI : MonoBehaviour
         GameManager.Instance.playerStats.OnDirtyChanged -= UpdateUI;
     }
 
-    void UpdateUI(int curDirty)
+    void UpdateUI(float curDirty)
     {
-        fillImage.fillAmount = 1- (float)curDirty / Const.DIRTY_MAX;
+        fillImage.fillAmount = 1- curDirty / Const.DIRTY_MAX;
     }
 }
