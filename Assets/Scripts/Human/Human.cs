@@ -8,6 +8,8 @@ public enum E_HumanStatus
     patrol,//Ñ²Âß
     warning,//¾¯¾õ
     arrest,//×¥²¶
+    loseSight1,//×·¶ª
+    loseSight2,
     backPatrol
 }
 
