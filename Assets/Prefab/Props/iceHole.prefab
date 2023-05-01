@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 3773281722032349504}
   - component: {fileID: 4195861263682967636}
   - component: {fileID: 2871783345663670131}
+  - component: {fileID: 208235819548817469}
   m_Layer: 0
   m_Name: temp
   m_TagString: iceHole
@@ -121,8 +122,20 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9200869984780048788}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.02, y: 0.019999996, z: 0.028867148}
-  m_Center: {x: 0, y: 9.50391e-11, z: 0.0044335737}
+  m_Size: {x: 0.02, y: 0.019999996, z: 0.04161521}
+  m_Center: {x: 0, y: -2.1847015e-17, z: 0.010807599}
+--- !u!114 &208235819548817469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9200869984780048788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455310cd7bb29eb4ca77407f5a03ed84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
