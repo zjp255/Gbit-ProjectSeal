@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +38,9 @@ public class PlayerController : MonoBehaviour
     private float dirtyTime = 0f;           //����Ⱦ���е�ʱ��
 
     public GameObject angerUIPrefab;
+    public Action GameOver;
+
+
 
     private void Awake()
     {
@@ -72,12 +76,24 @@ public class PlayerController : MonoBehaviour
     {
         if (isDead == false)
         {
-            isDead = (characterStats.CurrentHealth == 0);
-        }
-        if (isDead == true)
-        {
-            GameManager.Instance.NotifyObservers();
-        }
+            if (characterStats.BloodNum < 0)
+            {
+                isDead = true;
+                Debug.Log("die because of being captured!!!!!");
+            }
+            if (characterStats.DirtyNum == Const.DIRTY_MAX)
+            {
+                isDead = true;
+                Debug.Log("die because of being poisoned!!!!!");
+            }
+            if (isDead == true)
+            {
+                GameManager.Instance.NotifyObservers();
+                Debug.Log("gameover");
+                GameOver?.Invoke();
+                Debug.Log("gameover11");
+            }
+        }   
     }
 
     private void SwitchAnimation()
@@ -363,7 +379,7 @@ public class PlayerController : MonoBehaviour
         
         if(other.gameObject.tag.CompareTo("dirty_pool") == 0)
         {
-            Debug.Log("������Ⱦ��");
+            Debug.Log("dirty_in");
             isDirty = true;
         }
 
@@ -385,16 +401,14 @@ public class PlayerController : MonoBehaviour
     {
         if ((other.gameObject.tag.CompareTo("dirty_pool") == 0)&& isDirty)
         {
-            characterStats.DirtyNum += (float)(0.1 *dirtyTime);
+            characterStats.DirtyNum += (float)(0.001 *dirtyTime);
         }
     }
     void OnTriggerExit(Collider other)
     {
         isDirty = false;
         dirtyTime = 0;
-        //MonoBehaviour.OnTriggerEnter(Collider other)//当进入触发器
-        //MonoBehaviour.OnTriggerExit(Collider other)//当退出触发器
-        //MonoBehaviour.OnTriggerStay(Collider other)//当逗留触发器
+        Debug.Log("dirty_out");
     }
 
 
