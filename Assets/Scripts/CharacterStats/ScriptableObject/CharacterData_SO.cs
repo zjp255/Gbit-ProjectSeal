@@ -13,7 +13,7 @@ public class CharacterData_SO : ScriptableObject
     public int currentDefence;
 
     public int angerNum;//蓄力槽:满10为一格，最满4格
-    public int dirtyNum;//污染条
+    public float dirtyNum;//污染条
     public int bloodNum;//血条（海豹玩偶数量，初始为0）
     public bool isDead;//是否死亡
 
@@ -54,12 +54,12 @@ public class CharacterData_SO : ScriptableObject
         if(bloodNum < 0)
         {
             isDead = true;
-            Debug.Log("die because of being captured");
+            Debug.Log("die because of being captured!!!!!");
         }
-        if(dirtyNum == 3)
+        if(dirtyNum == Const.DIRTY_MAX)
         {
             isDead = true;
-            Debug.Log("die because of being poisoned");
+            Debug.Log("die because of being poisoned!!!!!");
         }
         return isDead;
     }

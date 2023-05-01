@@ -14,6 +14,8 @@ TagManager:
   - tent
   - fish
   - toy
+  - tent_disable
+  - dirty_pool
   - iceHole
   layers:
   - Default

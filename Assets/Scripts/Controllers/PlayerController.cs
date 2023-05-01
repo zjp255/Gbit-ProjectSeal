@@ -21,17 +21,21 @@ public class PlayerController : MonoBehaviour
 
     [Header("PlayerJumpControl")]
     private CharacterController controller;
-    public float speed = 5f;                //水平移动速度
-    private float curJumpHeight;            //当前最高点高度
-    public float heightReduceFactor = 0.05f;//最高点高度衰减系数
-    public float jumpLowerLimit = 0.5f;     //弹跳的最低高度
-    public float jumpOnHuman = 0.44f;       //跳人增幅
-    public float jumpOnCar = 0.3f;          //跳车增幅
-    public float jumpOnProps = 0.44f;        //跳道具增幅
-    private bool isJumpping = false;        //是否处于弹跳状态
-    private bool isSliding = false;         //是否处于滑行状态
+
+    public float speed = 5f;                //ˮƽ�ƶ��ٶ�
+    private float curJumpHeight;            //��ǰ��ߵ�߶�
+    public float heightReduceFactor = 0.05f;//��ߵ�߶�˥��ϵ��
+    public float jumpLowerLimit = 0.5f;     //�������͸߶�
+    public float jumpOnHuman = 0.44f;       //�������
+    public float jumpOnCar = 0.3f;          //�����
+    public float jumpOnProps = 0.44f;        //�������
+    private bool isJumpping = false;        //�Ƿ��ڵ���״̬
+    private bool isSliding = false;         //�Ƿ��ڻ���״̬
+    private bool isDirty = false;           //�Ƿ�����Ⱦ����
     private int inputFrames = 0;
-    private float propsTime = 0f;           //道具持续时间
+    private float propsTime = 0f;           //��߳���ʱ��
+    private float dirtyTime = 0f;           //����Ⱦ���е�ʱ��
+
     public GameObject angerUIPrefab;
 
     private void Awake()
@@ -60,7 +64,7 @@ public class PlayerController : MonoBehaviour
         TryToJump();
         ApplyJump();
         ApplySlide();
-        CheckSpeed();
+        CheckProps(); 
     }
 
 
@@ -271,14 +275,22 @@ public class PlayerController : MonoBehaviour
             characterStats.DirtyNum++;
         }
     }
-    //被污染物毒害：触碰一次污染槽涨一格，满三格后死亡
-    //道具
-    private void CheckSpeed()
+
+    //����Ⱦ�ﶾ��������һ����Ⱦ����һ������������
+    //���
+    private void CheckProps()
+
     {
+        //��߳���ʱ��
         propsTime += Time.deltaTime;
         if (propsTime > 5)
         {
             speed = 5;
+        }
+        //��Ⱦ��
+        if(isDirty)
+        {
+            dirtyTime += Time.deltaTime;
         }
     }
     void OnTriggerEnter(Collider other)
@@ -348,6 +360,24 @@ public class PlayerController : MonoBehaviour
             characterStats.AngerNum+=4;//蓄力值+4
             Debug.Log("道具触发结束，消失");
         }
+        
+        if(other.gameObject.tag.CompareTo("dirty_pool") == 0)
+        {
+            Debug.Log("������Ⱦ��");
+            isDirty = true;
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if ((other.gameObject.tag.CompareTo("dirty_pool") == 0)&& isDirty)
+        {
+            characterStats.DirtyNum += (float)(0.1 *dirtyTime);
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        isDirty = false;
+        dirtyTime = 0;
         //冰洞：切换关卡
         if (other.gameObject.tag.CompareTo("iceHole") == 0)
         {
