@@ -37,6 +37,9 @@ public class Hunter : Human
     private Vector2 warningStripSize;//警戒条size
     private float warningPoint;//警戒值
 
+    [Header("Animation")]
+    public Animator animator;
+
     //private bool playerIsInRange = false;
     // Start is called before the first frame update
     void Start()
@@ -66,6 +69,7 @@ public class Hunter : Human
             switch (status)
             {
                 case E_HumanStatus.idle:
+                    animator.SetBool("isRun", false);
                     getNextPatrolPoint();
                     if (hunterType == E_hunterType.car && nextPatrolPoint == 0)
                     {
@@ -73,32 +77,50 @@ public class Hunter : Human
                     }
                     break;
                 case E_HumanStatus.patrol:
+                    animator.SetBool("isRun", true);
                     inPatrol();
                     break;
                 case E_HumanStatus.warning:
+                    animator.SetBool("isRun",false);
                     inWarning();
                     break;
                 case E_HumanStatus.arrest:
+                    animator.SetBool("isRun",true);
                     inArrest();
                     break;
                 case E_HumanStatus.loseSight1:
                     inLoseSight1();
                     break;
                 case E_HumanStatus.loseSight2:
+                    animator.SetBool("isRun", false);
                     inLoseSight2();
                     break;
                 case E_HumanStatus.backPatrol:
+                    animator.SetBool("isRun", true);
                     inBackPatrol();
                     break;
             }
         }
         else
         {
-            delayTime -= Time.deltaTime;
-            if (delayTime < 0)
+            closeWarningStrip();
+            animator.SetBool("isDizzy", true);
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+
+            // 判断动画是否已经播放完毕
+            if (currentState.normalizedTime <= 0.55f && currentState.IsName("Hit To Head"))
             {
-                delayTime = 0;
-                aware();
+                characterController.SimpleMove(transform.forward * patrolSpeed);
+            }
+            else
+            {
+                delayTime -= Time.deltaTime;
+                if (delayTime < 0)
+                {
+                    delayTime = 0;
+                    aware();
+                    animator.SetBool("isDizzy", false);
+                }
             }
         }
     }
@@ -109,9 +131,11 @@ public class Hunter : Human
     public bool playerIsInRange()
     {
         float angle = Vector3.Angle(transform.forward, player.transform.position - transform.position);
+        
         if (Vector3.Distance(transform.position, player.transform.position) < sightR && angle < sightAngle)
         {
             RaycastHit hit;
+           
             Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
             if (hit.transform.tag == "Player")
             {
@@ -136,6 +160,7 @@ public class Hunter : Human
         }
         if (playerIsInRange())
         {
+            
             status = E_HumanStatus.warning;
         }
     }
@@ -267,17 +292,21 @@ public class Hunter : Human
         }
         else
         {
-            //gameObject.transform.forward = new Vector3(patrolPointS[nextPatrolPoint].x - transform.position.x, 0, patrolPointS[nextPatrolPoint].z - transform.position.z);
-            //characterController.SimpleMove(transform.forward * patrolSpeed);
+            gameObject.transform.forward = new Vector3(patrolPointS[nextPatrolPoint].x - transform.position.x, 0, patrolPointS[nextPatrolPoint].z - transform.position.z);
+            characterController.SimpleMove(transform.forward * patrolSpeed);
             move(playerMissPoint, patrolSpeed);
-            //RaycastHit hit;
-            //if(Physics.Raycast(new Ray(transform.position, transform.TransformPoint(transform.forward)), out hit, outRange, 1 << 0) && hit.transform.tag != "Player" )
-            //{
-            //    status = E_HumanStatus.loseSight2;
-            //    lookAtRight = transform.TransformPoint(new Vector3(2, 0, -2));
-            //    lookAtLeft = transform.TransformPoint(new Vector3(-2, 0, -2));
+            RaycastHit hit;
+            if (Physics.Raycast(new Ray(transform.position, transform.TransformPoint(transform.forward)), out hit, outRange, 1 << 0) && hit.transform.tag != "Player")
+            {
+                status = E_HumanStatus.loseSight2;
+                lookAtRight = transform.TransformPoint(new Vector3(2, 0, -2));
+                lookAtLeft = transform.TransformPoint(new Vector3(-2, 0, -2));
 
-            //}
+            }
+            else
+            {
+                status = E_HumanStatus.backPatrol;
+            }
         }
     }
 
