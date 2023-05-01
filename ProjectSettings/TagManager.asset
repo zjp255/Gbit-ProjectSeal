@@ -15,6 +15,7 @@ TagManager:
   - fish
   - toy
   - tent_disable
+  - dirty_pool
   layers:
   - Default
   - TransparentFX
