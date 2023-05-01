@@ -22,13 +22,13 @@ public enum E_PatrolType
 public class Human : MonoBehaviour
 {
     public E_HumanStatus status;//人类状态
-    
+
 
     [Header("巡逻")]
     public List<Vector3> patrolPointS;//巡逻点
     public float patrolSpeed;//巡逻速度
     public E_PatrolType patrolType = E_PatrolType.palindrome;
-    protected int nextPatrolPoint; 
+    protected int nextPatrolPoint;
 
     //[Header("逮捕")]
     //public float arrestSpeed;//抓捕速度
@@ -73,7 +73,7 @@ public class Human : MonoBehaviour
     //    player = GameObject.FindGameObjectWithTag("Player");
     //    //angle_rightTan = (180 - sightAngle) / 2 / 180  * Mathf.PI;
     //    //angle_leftTan = ((180 - sightAngle) / 2 + sightAngle) / 180 * Mathf.PI;
-      
+
     //}
 
     // Update is called once per frame
@@ -107,6 +107,9 @@ public class Human : MonoBehaviour
     //            delayTime = 0;
     //    }
     //}
+
+    
+
 
     #region Universal 
 
@@ -206,6 +209,7 @@ public class Human : MonoBehaviour
                 nextPatrolPoint = ++nextPatrolPoint % patrolPointS.Count;
             }
             status = E_HumanStatus.patrol;
+
         }
         else if (status == E_HumanStatus.backPatrol)
         {
@@ -256,6 +260,7 @@ public class Human : MonoBehaviour
                 )
         {
             status = E_HumanStatus.idle;
+          
         }
         else
         {
