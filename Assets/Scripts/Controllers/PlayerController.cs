@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,9 +6,9 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    private Animator anim;//²¥·Å¶¯»­
-    private CharacterStats characterStats;//ÊôĞÔ
-    private bool isDead;//ÊÇ·ñËÀÍö
+    private Animator anim;//æ’­æ”¾åŠ¨ç”»
+    private CharacterStats characterStats;//å±æ€§
+    private bool isDead;//æ˜¯å¦æ­»äº¡
 
     [Header("Gravity")]
     public float gravity = -9.81f;
@@ -15,20 +16,31 @@ public class PlayerController : MonoBehaviour
 
     [Header("OnGroundCheck")]
     public bool isGround;
-    public float groundCheckRadius;         //¼ì²é°ë¾¶
+    public float groundCheckRadius;         //æ£€æŸ¥åŠå¾„
     public Transform checkGround;           
     public LayerMask groundPlayer;
 
     [Header("PlayerJumpControl")]
     private CharacterController controller;
-    public float speed = 5f;                //Ë®Æ½ÒÆ¶¯ËÙ¶È
-    private float curJumpHeight;            //µ±Ç°×î¸ßµã¸ß¶È
-    public float heightReduceFactor = 0.05f;//×î¸ßµã¸ß¶ÈË¥¼õÏµÊı
-    public float jumpLowerLimit = 0.5f;     //µ¯ÌøµÄ×îµÍ¸ß¶È
-    private bool isJumpping = false;        //ÊÇ·ñ´¦ÓÚµ¯Ìø×´Ì¬
-    private bool isSliding = false;         //ÊÇ·ñ´¦ÓÚ»¬ĞĞ×´Ì¬
+
+    public float speed = 5f;                //Ë®Æ½ï¿½Æ¶ï¿½ï¿½Ù¶ï¿½
+    private float curJumpHeight;            //ï¿½ï¿½Ç°ï¿½ï¿½ßµï¿½ß¶ï¿½
+    public float heightReduceFactor = 0.05f;//ï¿½ï¿½ßµï¿½ß¶ï¿½Ë¥ï¿½ï¿½Ïµï¿½ï¿½
+    public float jumpLowerLimit = 0.5f;     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ß¶ï¿½
+    public float jumpOnHuman = 0.44f;       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public float jumpOnCar = 0.3f;          //ï¿½ï¿½ï¿½ï¿½ï¿½
+    public float jumpOnProps = 0.44f;        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    private bool isJumpping = false;        //ï¿½Ç·ï¿½ï¿½Úµï¿½ï¿½ï¿½×´Ì¬
+    private bool isSliding = false;         //ï¿½Ç·ï¿½ï¿½Ú»ï¿½ï¿½ï¿½×´Ì¬
+    private bool isDirty = false;           //ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½ï¿½
     private int inputFrames = 0;
+    private float propsTime = 0f;           //ï¿½ï¿½ß³ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+    private float dirtyTime = 0f;           //ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½Ğµï¿½Ê±ï¿½ï¿½
+
     public GameObject angerUIPrefab;
+    public Action GameOver;
+
+
 
     private void Awake()
     {
@@ -40,12 +52,12 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         GameManager.Instance.RigisterPlayer(characterStats);
-        Instantiate(angerUIPrefab);
     }
 
     private void Start()
     {
         SaveManager.Instance.LoadPlayerData();
+        Instantiate(angerUIPrefab);
     }
 
     private void Update()
@@ -53,21 +65,33 @@ public class PlayerController : MonoBehaviour
         CheckPlayerCondition();
         SwitchAnimation();
         SimulatePhysics();
-        tryToJump();
-        applyJump();
-        applySlide();
+        TryToJump();
+        ApplyJump();
+        ApplySlide();
+        CheckProps(); 
     }
+
 
     private void CheckPlayerCondition()
     {
         if (isDead == false)
         {
-            isDead = (characterStats.CurrentHealth == 0);
-        }
-        if (isDead == true)
-        {
-            GameManager.Instance.NotifyObservers();
-        }
+            if (characterStats.BloodNum < 0)
+            {
+                isDead = true;
+                Debug.Log("die because of being captured!!!!!");
+            }
+            if (characterStats.DirtyNum == Const.DIRTY_MAX)
+            {
+                isDead = true;
+                Debug.Log("die because of being poisoned!!!!!");
+            }
+            if (isDead == true)
+            {
+                GameManager.Instance.NotifyObservers();
+                //GameOver?.Invoke();
+            }
+        }   
     }
 
     private void SwitchAnimation()
@@ -81,15 +105,17 @@ public class PlayerController : MonoBehaviour
                     anim.SetBool("isJumpUp", true);
                     anim.SetBool("isFallDown", false);
                     anim.SetBool("isSlide", false);
+                    anim.SetTrigger("JumpUp");
                 }
             }
             else
             {
                 if(anim.GetBool("isFallDown") == false)
                 {
-                    anim.SetBool("isJumpUp", false);
                     anim.SetBool("isFallDown", true);
+                    anim.SetBool("isJumpUp", false);
                     anim.SetBool("isSlide", false);
+                    anim.SetTrigger("FallDown");
                 }
             }
         }
@@ -99,9 +125,10 @@ public class PlayerController : MonoBehaviour
             {
                 if (anim.GetBool("isSlide") == false)
                 {
+                    anim.SetBool("isSlide", true);
                     anim.SetBool("isJumpUp", false);
                     anim.SetBool("isFallDown", false);
-                    anim.SetBool("isSlide", true);
+                    anim.SetTrigger("Slide");
                 }
             }
         }
@@ -118,20 +145,20 @@ public class PlayerController : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
     }
     
-    private bool tryJumpWhenStill()
+    private bool TryJumpWhenStill()
     {
-        // ¾²Ö¹ÔÚµØÃæÉÏ£¬×¼±¸ÆğÌøµÚÒ»´Î
+        // é™æ­¢åœ¨åœ°é¢ä¸Šï¼Œå‡†å¤‡èµ·è·³ç¬¬ä¸€æ¬¡
         return !isJumpping && !isSliding && isGround;
     }
 
-    private bool tryJumpWhenSlide()
+    private bool TryJumpWhenSlide()
     {
         return !isJumpping && isSliding && isGround;
     }
 
-    private void tryToJump()
+    private void TryToJump()
     {
-        if (tryJumpWhenStill() || tryJumpWhenSlide())
+        if (TryJumpWhenStill() || TryJumpWhenSlide())
         {
             if (Input.GetButton("Jump"))
             {
@@ -140,9 +167,20 @@ public class PlayerController : MonoBehaviour
             if (Input.GetButtonUp("Jump"))
             {
                 if (inputFrames >= 100)
-                    JumpWithAllAnger();     // ³¤°´³¬¹ı100Ö¡µÄ¼ÆÊıÈ«²¿ÊÍ·Å
+                {
+                    JumpWithAllAnger();     // é•¿æŒ‰è¶…è¿‡100å¸§çš„è®¡æ•°å…¨éƒ¨é‡Šæ”¾
+                }
                 else
-                    JumpWithUnitAnger();    // ¶Ì°´ÊÍ·Å1¸ñ
+                {
+                    if (TryJumpWhenStill())
+                    {
+                        JumpWithNoAnger();      // ç¬¬ä¸€æ¬¡èµ·è·³ä¸æ¶ˆè€—è“„åŠ›æ¡
+                    }
+                    else
+                    {
+                        JumpWithUnitAnger();    // çŸ­æŒ‰é‡Šæ”¾1æ ¼
+                    }
+                }
                 inputFrames = 0;
                 isJumpping = true;
                 isSliding = false;
@@ -154,7 +192,7 @@ public class PlayerController : MonoBehaviour
     {
         if (characterStats.AngerNum < Const.ANGER_UNIT)
         {
-            Debug.Log("²»×ãÒ»¸ñ£¬²»ÄÜÊÍ·Å");
+            Debug.Log("ä¸è¶³ä¸€æ ¼ï¼Œä¸èƒ½é‡Šæ”¾");
         }
         else
         {
@@ -168,7 +206,7 @@ public class PlayerController : MonoBehaviour
     {
         if (characterStats.AngerNum < Const.ANGER_UNIT)
         {
-            Debug.Log("²»×ãÒ»¸ñ£¬²»ÄÜÊÍ·Å");
+            Debug.Log("ä¸è¶³ä¸€æ ¼ï¼Œä¸èƒ½é‡Šæ”¾");
         }
         else
         {
@@ -177,13 +215,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void applyJump()
+    private void JumpWithNoAnger()
+    {
+        curJumpHeight = Const.ANGER_HEIGHT[1];
+    }
+
+    private void ApplyJump()
     {
         if (isJumpping && !isSliding)
         {
             if (!isGround)
             {
-                // ÖÍ¿ÕÊ±£¬¿ÉÒÔÓÃ·½Ïò¼ü¿ØÖÆË®Æ½ÒÆ¶¯
+                // æ»ç©ºæ—¶ï¼Œå¯ä»¥ç”¨æ–¹å‘é”®æ§åˆ¶æ°´å¹³ç§»åŠ¨
                 float horizontal = Input.GetAxis("Horizontal");
                 float vertical = Input.GetAxis("Vertical");
                 Vector3 moveDir = new Vector3(vertical, 0, horizontal);
@@ -195,14 +238,14 @@ public class PlayerController : MonoBehaviour
             {
                 if (curJumpHeight >= jumpLowerLimit)
                 {
-                    // ÏòÉÏÌøÔ¾
+                    // å‘ä¸Šè·³è·ƒ
                     playerVelocity.y = Mathf.Sqrt(-gravity * 2f * curJumpHeight);
-                    // Ã¿´ÎÂäµØ£¬×î´ó¸ß¶ÈË¥¼õ5%
+                    // æ¯æ¬¡è½åœ°ï¼Œæœ€å¤§é«˜åº¦è¡°å‡5%
                     curJumpHeight = curJumpHeight * (1 - heightReduceFactor);
                 }
                 else
                 {
-                    //µ±ÌøÔ¾¸ß¶ÈĞ¡ÓÚÉè¶¨µÄ×îĞ¡Öµ£¬Ğ¡º£±ªË®Æ½ÒÆ¶¯
+                    //å½“è·³è·ƒé«˜åº¦å°äºè®¾å®šçš„æœ€å°å€¼ï¼Œå°æµ·è±¹æ°´å¹³ç§»åŠ¨
                     isJumpping = false;
                     isSliding = true;
                 }
@@ -210,7 +253,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void applySlide()
+    private void ApplySlide()
     {
         if(!isJumpping && isSliding && isGround)
         {
@@ -230,8 +273,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //ºÍÑªÁ¿Ïà¹ØµÄº¯Êı
-    //±»ÈËÀà²¶×½||±»Æû³µ×²µ½
+    //å’Œè¡€é‡ç›¸å…³çš„å‡½æ•°
+    //è¢«äººç±»æ•æ‰||è¢«æ±½è½¦æ’åˆ°
     void GetCaptured(Collider other)
     {
         if((other.gameObject.tag.CompareTo("enemy") == 0)|| (other.gameObject.tag.CompareTo("car") == 0))
@@ -246,73 +289,124 @@ public class PlayerController : MonoBehaviour
             characterStats.DirtyNum++;
         }
     }
-    //±»ÎÛÈ¾Îï¶¾º¦£º´¥ÅöÒ»´ÎÎÛÈ¾²ÛÕÇÒ»¸ñ£¬ÂúÈı¸ñºóËÀÍö
-    //µÀ¾ß
+
+    //ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¶¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //ï¿½ï¿½ï¿½
+    private void CheckProps()
+
+    {
+        //ï¿½ï¿½ß³ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+        propsTime += Time.deltaTime;
+        if (propsTime > 5)
+        {
+            speed = 5;
+        }
+        //ï¿½ï¿½È¾ï¿½ï¿½
+        if(isDirty)
+        {
+            dirtyTime += Time.deltaTime;
+        }
+    }
     void OnTriggerEnter(Collider other)
     {
-        //TODO:jumpÏà¹Ø»¹Ã»Ğ´
+        //ç¢°åˆ°ç‰©ä½“ æ£€æµ‹tag
 
-        //Åöµ½ÎïÌå ¼ì²âtag
-        //´²£ºbed ÕÊÅñ£ºtent ÉñÆæĞ¡Óã£ºfish º£±ªÍæÅ¼£ºtoy »¬°å³µ£ºscooter
-
-        //ÕÊÅñ£ºÌøÔ¾Ôö·ù20%£¬ĞîÁ¦Öµ+1£¬Ê¹ÓÃºó±ä³Ébed
+        //å¸ç¯·ï¼šè·³è·ƒå¢å¹…20%ï¼Œè“„åŠ›å€¼+1ï¼Œä½¿ç”¨åå˜æˆbed
         if (other.gameObject.tag.CompareTo("tent") == 0)
         {
-            Debug.Log("´¥·¢µÀ¾ß£ºÕÊÅñ");
-            curJumpHeight = curJumpHeight * (1 + 0.8f);
-            characterStats.characterData.angerNum++;//ĞîÁ¦Öµ+1
-            other.gameObject.SetActive(false);//Òş²ØÎïÌå
-            //other.gameObject.tag = "bed";
+            Debug.Log("è§¦å‘é“å…·ï¼šå¸ç¯·");
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//è“„åŠ›å€¼+1
+            other.gameObject.SetActive(false);//éšè—ç‰©ä½“
+            other.gameObject.tag = "tent_disable";
         }
-        //´²£ºÌøÔ¾Ôö·ù20%£¬ĞîÁ¦Öµ+1£¬Ê¹ÓÃºó±ä³Ébed_disable
+        //åºŠï¼šè·³è·ƒå¢å¹…20%ï¼Œè“„åŠ›å€¼+1ï¼Œä½¿ç”¨åå˜æˆbed_disable
         if (other.gameObject.tag.CompareTo("bed") == 0)
         {
-            Debug.Log("´¥·¢µÀ¾ß£º´²");
-            curJumpHeight = curJumpHeight * (1 + 0.8f);
-            characterStats.characterData.angerNum++;//ĞîÁ¦Öµ+1
+            Debug.Log("è§¦å‘é“å…·ï¼šåºŠ");
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//è“„åŠ›å€¼+1
             other.gameObject.tag = "bed_disable";
-            Debug.Log("µÀ¾ß´¥·¢½áÊø");
+            Debug.Log("é“å…·è§¦å‘ç»“æŸ");
         }
         if (other.gameObject.tag.CompareTo("bed_disable") == 0)
         {
             Debug.Log("bed_disable");
         }
-        //ÉñÆæĞ¡Óã£º¼´ÓÃµÀ¾ß£¬Çå¿ÕÎÛÈ¾²Û£¬ÌøÔ¾ÓëË®Æ½ÒÆ¶¯¾ùÔö·ù30%£¬Ê¹ÓÃºóÏûÊ§
+        //ç¥å¥‡å°é±¼ï¼šå³ç”¨é“å…·ï¼Œæ¸…ç©ºæ±¡æŸ“æ§½ï¼Œè·³è·ƒä¸æ°´å¹³ç§»åŠ¨å‡å¢å¹…30%ï¼Œä½¿ç”¨åæ¶ˆå¤±
         if (other.gameObject.tag.CompareTo("fish") == 0)
         {
-            Debug.Log("´¥·¢µÀ¾ß£ºÉñÆæĞ¡Óã");
-            curJumpHeight = curJumpHeight * (1 + 0.9f);
-            //TODO:Ë®Æ½
-            characterStats.characterData.dirtyNum = 0;//ÎÛÈ¾ÌõÇåÁã
-            other.gameObject.SetActive(false);//Òş²ØÎïÌå
-            Debug.Log("µÀ¾ß´¥·¢½áÊø£¬ÏûÊ§");
+            Debug.Log("è§¦å‘é“å…·ï¼šç¥å¥‡å°é±¼");
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//è“„åŠ›å€¼+1
+            propsTime = 0;
+            speed = speed*(1+ jumpOnProps);
+            characterStats.DirtyNum = 0;//æ±¡æŸ“æ¡æ¸…é›¶
+            other.gameObject.SetActive(false);//éšè—ç‰©ä½“
+            Debug.Log("é“å…·è§¦å‘ç»“æŸï¼Œæ¶ˆå¤±");
         }
-        //º£±ªÍæÅ¼£º¼´ÓÃµÀ¾ß£¬µÖµ²ÈËÀà²¶×½Ò»´Î£¬Ê¹ÓÃºóÏûÊ§
+        //æµ·è±¹ç©å¶ï¼šå³ç”¨é“å…·ï¼ŒæŠµæŒ¡äººç±»æ•æ‰ä¸€æ¬¡ï¼Œä½¿ç”¨åæ¶ˆå¤±
         if (other.gameObject.tag.CompareTo("toy") == 0)
         {
-            Debug.Log("´¥·¢µÀ¾ß£ºº£±ªÍæÅ¼");
-            characterStats.characterData.bloodNum++;//ÑªÌõ+1
-            other.gameObject.SetActive(false);//Òş²ØÎïÌå
-            Debug.Log("µÀ¾ß´¥·¢½áÊø£¬ÏûÊ§");
+            Debug.Log("è§¦å‘é“å…·ï¼šæµ·è±¹ç©å¶");
+            characterStats.BloodNum++;//è¡€æ¡+1
+            other.gameObject.SetActive(false);//éšè—ç‰©ä½“
+            Debug.Log("é“å…·è§¦å‘ç»“æŸï¼Œæ¶ˆå¤±");
         }
-        //TODO£ºÕâÁ½¸öÔõÃ´ÅĞ¶¨ÊÇ»÷ÖĞ»¹ÊÇ²¶×½
-        //ÈËÀà£ºËÙ¶ÈÔöÒæ20 %
-        if (other.gameObject.tag.CompareTo("human") == 0)
+        //äººç±»ï¼šé€Ÿåº¦å¢ç›Š20 %
+        if (other.gameObject.tag.CompareTo("human_h1") == 0)
         {
-            Debug.Log("´¥·¢µÀ¾ß£ºÈËÀà");
-            curJumpHeight = curJumpHeight * (1 + 0.2f);
-            Debug.Log("µÀ¾ß´¥·¢½áÊø£¬ÏûÊ§");
+            Debug.Log("è§¦å‘é“å…·ï¼šæ™®é€šäººç±»");
+            curJumpHeight = curJumpHeight * (1 + jumpOnHuman);
+            characterStats.AngerNum++;//è“„åŠ›å€¼+1
         }
-        //Åñ³µ£ºËÙ¶ÈÔöÒæ30 %£¬Ê¹ÓÃÒ»´ÎºóÅñ³µÒÆËÙ¼õÂı£¬Ê¹ÓÃÁ½´ÎºóÅñ³µÍ£ÏÂ£¬×ß³ö¿ñ±©ÈËÀà
+        if (other.gameObject.tag.CompareTo("human_h2") == 0)
+        {
+            Debug.Log("è§¦å‘é“å…·ï¼šç‹‚æš´äººç±»");
+            curJumpHeight = curJumpHeight * (1 + jumpOnHuman);
+            characterStats.AngerNum+=3;//è“„åŠ›å€¼+3
+        }
+        //ç¯·è½¦ï¼šé€Ÿåº¦å¢ç›Š30 %ï¼Œä½¿ç”¨ä¸€æ¬¡åç¯·è½¦ç§»é€Ÿå‡æ…¢ï¼Œä½¿ç”¨ä¸¤æ¬¡åç¯·è½¦åœä¸‹ï¼Œèµ°å‡ºç‹‚æš´äººç±»
         if (other.gameObject.tag.CompareTo("car") == 0)
         {
-            Debug.Log("´¥·¢µÀ¾ß£ºÅñ³µ");
-            curJumpHeight = curJumpHeight * (1 + 0.3f);
-            Debug.Log("µÀ¾ß´¥·¢½áÊø£¬ÏûÊ§");
+            Debug.Log("è§¦å‘é“å…·ï¼šç¯·è½¦");
+            curJumpHeight = curJumpHeight * (1 + jumpOnCar);
+            characterStats.AngerNum+=4;//è“„åŠ›å€¼+4
+            Debug.Log("é“å…·è§¦å‘ç»“æŸï¼Œæ¶ˆå¤±");
         }
-        //MonoBehaviour.OnTriggerEnter(Collider other)//µ±½øÈë´¥·¢Æ÷
-        //MonoBehaviour.OnTriggerExit(Collider other)//µ±ÍË³ö´¥·¢Æ÷
-        //MonoBehaviour.OnTriggerStay(Collider other)//µ±¶ºÁô´¥·¢Æ÷
+        
+        if(other.gameObject.tag.CompareTo("dirty_pool") == 0)
+        {
+            Debug.Log("dirty_in");
+            isDirty = true;
+        }
+
+        //å†°æ´ï¼šåˆ‡æ¢å…³å¡
+        if (other.gameObject.tag.CompareTo("iceHole") == 0)
+        {
+            if(other.gameObject.GetComponent<IceHole>().isUsed == false)
+            {
+                GameManager.Instance.curLevel += 1;
+                other.gameObject.GetComponent<IceHole>().isUsed = true;
+                if (GameManager.Instance.curLevel <= 4)
+                {
+                    SceneController.Instance.TransitionToLevel(GameManager.Instance.curLevel);
+                }
+            }
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if ((other.gameObject.tag.CompareTo("dirty_pool") == 0)&& isDirty)
+        {
+            characterStats.DirtyNum += (float)(0.001 *dirtyTime);
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        isDirty = false;
+        dirtyTime = 0;
+        Debug.Log("dirty_out");
     }
 
 

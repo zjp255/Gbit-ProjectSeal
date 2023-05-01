@@ -8,6 +8,8 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector]
     public CharacterStats playerStats;
     private CinemachineVirtualCamera camera;
+    [HideInInspector]
+    public int curLevel;
 
     List<IEndGameObserver> endGameObservers = new List<IEndGameObserver>();
 
@@ -23,7 +25,7 @@ public class GameManager : Singleton<GameManager>
         camera = FindObjectOfType<CinemachineVirtualCamera>();
         if(camera != null)
         {
-            camera.Follow = playerStats.transform.GetChild(2);
+            camera.Follow = playerStats.transform.GetChild(1);
             //camera.LookAt = playerStats.transform.GetChild(2);
         }
     }

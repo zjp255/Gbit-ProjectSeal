@@ -10,6 +10,10 @@ public static class Const
     public static int ANGER_UNIT = 10;      // 蓄力每10点1格
     public static List<float> ANGER_HEIGHT = new List<float>() { 0, 3, 3, 3, 3 };
 
+    public static int BLOOD_MAX = 5;
+    public static int BLOOD_MIN = 0;
+    public static float DIRTY_MAX = 5f;
+    public static float DIRTY_MIN = 0f;
     #endregion
 
 

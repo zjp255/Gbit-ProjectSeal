@@ -10,6 +10,13 @@ TagManager:
   - Protal
   - Item
   - bed
+  - bed_disable
+  - tent
+  - fish
+  - toy
+  - tent_disable
+  - dirty_pool
+  - iceHole
   layers:
   - Default
   - TransparentFX
