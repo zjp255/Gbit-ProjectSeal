@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     private int inputFrames = 0;
     private float propsTime = 0f;           //��߳���ʱ��
     private float dirtyTime = 0f;           //����Ⱦ���е�ʱ��
-    //private bool isPaused = 
+    private bool isPlaying = true;
 
     public GameObject angerUIPrefab;
     public Action GameOver;
@@ -63,13 +63,21 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        CheckPlayerCondition();
-        SwitchAnimation();
-        SimulatePhysics();
-        TryToJump();
-        ApplyJump();
-        ApplySlide();
-        CheckProps(); 
+        //FIXME:测试代码 记得删除
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            isPlaying = !isPlaying;
+        }
+        if (isPlaying)
+        {
+            CheckPlayerCondition();
+            SwitchAnimation();
+            SimulatePhysics();
+            TryToJump();
+            ApplyJump();
+            ApplySlide();
+            CheckProps();
+        }
     }
 
 
