@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using System;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -12,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     public int curLevel;
 
     List<IEndGameObserver> endGameObservers = new List<IEndGameObserver>();
+
 
     protected override void Awake()
     {

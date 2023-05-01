@@ -21,6 +21,7 @@ public class CharacterStats : MonoBehaviour
     public event Action<int> OnAngerChanged;
     public event Action<int> OnBloodChanged;
     public event Action<float> OnDirtyChanged;
+    
 
     private void Awake()
     {
