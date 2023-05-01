@@ -535,6 +535,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4590011030043637240, guid: 83342ca9f004fc6438dd887959ca5def, type: 3}
+      propertyPath: m_TagString
+      value: dirty_pool
+      objectReference: {fileID: 0}
     - target: {fileID: 4785398635952655916, guid: 83342ca9f004fc6438dd887959ca5def, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -690,6 +694,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -4298531762846874123, guid: f25b63cef6ade234a8b4b09739373fed, type: 3}
+--- !u!1 &1504312099 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4590011030043637240, guid: 83342ca9f004fc6438dd887959ca5def, type: 3}
+  m_PrefabInstance: {fileID: 1504312082}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1504312100
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504312099}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.4725604, y: 0.28028023, z: 0.012535687}
+  m_Center: {x: -0.000000022351742, y: 0, z: 0}
 --- !u!1001 &1675394716
 PrefabInstance:
   m_ObjectHideFlags: 0
