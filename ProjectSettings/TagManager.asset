@@ -16,6 +16,7 @@ TagManager:
   - toy
   - tent_disable
   - dirty_pool
+  - iceHole
   layers:
   - Default
   - TransparentFX

@@ -8,6 +8,8 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector]
     public CharacterStats playerStats;
     private CinemachineVirtualCamera camera;
+    [HideInInspector]
+    public int curLevel;
 
     List<IEndGameObserver> endGameObservers = new List<IEndGameObserver>();
 

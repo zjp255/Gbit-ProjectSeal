@@ -360,7 +360,7 @@ public class PlayerController : MonoBehaviour
             characterStats.AngerNum+=4;//蓄力值+4
             Debug.Log("道具触发结束，消失");
         }
-
+        
         if(other.gameObject.tag.CompareTo("dirty_pool") == 0)
         {
             Debug.Log("������Ⱦ��");
@@ -378,6 +378,19 @@ public class PlayerController : MonoBehaviour
     {
         isDirty = false;
         dirtyTime = 0;
+        //冰洞：切换关卡
+        if (other.gameObject.tag.CompareTo("iceHole") == 0)
+        {
+            GameManager.Instance.curLevel += 1;
+            Debug.Log(GameManager.Instance.curLevel);
+            if (GameManager.Instance.curLevel <= 4)
+            {
+                SceneController.Instance.TransitionToLevel(GameManager.Instance.curLevel);
+            }
+        }
+        //MonoBehaviour.OnTriggerEnter(Collider other)//当进入触发器
+        //MonoBehaviour.OnTriggerExit(Collider other)//当退出触发器
+        //MonoBehaviour.OnTriggerStay(Collider other)//当逗留触发器
     }
 
 
