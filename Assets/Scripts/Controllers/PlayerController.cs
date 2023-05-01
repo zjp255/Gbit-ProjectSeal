@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("OnGroundCheck")]
     public bool isGround;
+    public bool isBad;
     public float groundCheckRadius;         //检查半径
     public Transform checkGround;           
     public LayerMask groundPlayer;
@@ -70,6 +71,7 @@ public class PlayerController : MonoBehaviour
         characterStats = GetComponent<CharacterStats>();
         controller = GetComponent<CharacterController>();
         airPos = checkGround.position;
+        isBad = false;
     }
 
     private void OnEnable()
@@ -107,6 +109,7 @@ public class PlayerController : MonoBehaviour
             ApplyJump();
             ApplySlide();
             CheckProps();
+            if (isBad) Debug.Log("1!");
         }
     }
 
@@ -177,7 +180,7 @@ public class PlayerController : MonoBehaviour
     {
         playerVelocity.y += gravity * Time.deltaTime;
         isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
-        if (!isGround)
+        if (isGround == false)
         {
             RaycastHit hit;
             Vector3 origin = transform.position;
@@ -187,25 +190,28 @@ public class PlayerController : MonoBehaviour
                 Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0, -1, 0)));
                 if (Vector3.Distance(hit.transform.position, checkGround.position) > 0)
                 {
-                    if (airPos == checkGround.position)
+                    
+                    if (airPos == checkGround.position && playerVelocity.y!=0)
                     {
                         airTime++;
+                        Debug.Log(playerVelocity.y);
                     }
                     else
                     {
                         airPos = checkGround.position;
                         airTime = 0;
+                        isGround = false;
                     }
-
                     // 异常卡死情况
-                    if (airTime > 20)
+                    if (airTime > 50)
                     {
                         isGround = true;
+                        airTime = 0;
                     }
                 }
             }
         }
-        if (isGround && playerVelocity.y < 0)
+        if ((isGround) && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
@@ -215,12 +221,12 @@ public class PlayerController : MonoBehaviour
     private bool TryJumpWhenStill()
     {
         // 静止在地面上，准备起跳第一次
-        return !isJumpping && !isSliding && isGround;
+        return !isJumpping && !isSliding && (isGround);
     }
 
     private bool TryJumpWhenSlide()
     {
-        return !isJumpping && isSliding && isGround;
+        return !isJumpping && isSliding && (isGround);
     }
 
     private void TryToJump()
