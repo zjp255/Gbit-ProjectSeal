@@ -139,6 +139,9 @@ MonoBehaviour:
   speed: 5
   heightReduceFactor: 0.05
   jumpLowerLimit: 0.5
+  jumpOnHuman: 0.44
+  jumpOnCar: 0.3
+  jumpOnProps: 0.44
   angerUIPrefab: {fileID: 6872390045205359670, guid: 99ab873b933276d4d8eba0be7034407f, type: 3}
 --- !u!114 &6876266028851343428
 MonoBehaviour:

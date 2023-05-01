@@ -10,6 +10,15 @@ public class GameManager : Singleton<GameManager>
     private CinemachineVirtualCamera camera;
     [HideInInspector]
     public int curLevel;
+    private List<Vector3> cameraPos = new List<Vector3>
+    {
+        new Vector3(5,8,0),
+
+    };
+    private List<Quaternion> cameraRotation = new List<Quaternion>
+    {
+        new Quaternion(0.164301902f,-0.792195201f,0.243271828f,0.535023868f)
+    };
 
     List<IEndGameObserver> endGameObservers = new List<IEndGameObserver>();
 
@@ -23,9 +32,10 @@ public class GameManager : Singleton<GameManager>
     {
         playerStats = player;
         camera = FindObjectOfType<CinemachineVirtualCamera>();
+        //camera.transform.SetPositionAndRotation(cameraPos[curLevel - 1], cameraRotation[curLevel - 1]);
         if(camera != null)
         {
-            camera.Follow = playerStats.transform.GetChild(2);
+            camera.Follow = playerStats.transform.GetChild(1);
             //camera.LookAt = playerStats.transform.GetChild(2);
         }
     }

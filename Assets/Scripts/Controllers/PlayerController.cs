@@ -366,6 +366,20 @@ public class PlayerController : MonoBehaviour
             Debug.Log("������Ⱦ��");
             isDirty = true;
         }
+
+        //冰洞：切换关卡
+        if (other.gameObject.tag.CompareTo("iceHole") == 0)
+        {
+            if(other.gameObject.GetComponent<IceHole>().isUsed == false)
+            {
+                GameManager.Instance.curLevel += 1;
+                other.gameObject.GetComponent<IceHole>().isUsed = true;
+                if (GameManager.Instance.curLevel <= 4)
+                {
+                    SceneController.Instance.TransitionToLevel(GameManager.Instance.curLevel);
+                }
+            }
+        }
     }
     void OnTriggerStay(Collider other)
     {
@@ -378,16 +392,6 @@ public class PlayerController : MonoBehaviour
     {
         isDirty = false;
         dirtyTime = 0;
-        //冰洞：切换关卡
-        if (other.gameObject.tag.CompareTo("iceHole") == 0)
-        {
-            GameManager.Instance.curLevel += 1;
-            Debug.Log(GameManager.Instance.curLevel);
-            if (GameManager.Instance.curLevel <= 4)
-            {
-                SceneController.Instance.TransitionToLevel(GameManager.Instance.curLevel);
-            }
-        }
         //MonoBehaviour.OnTriggerEnter(Collider other)//当进入触发器
         //MonoBehaviour.OnTriggerExit(Collider other)//当退出触发器
         //MonoBehaviour.OnTriggerStay(Collider other)//当逗留触发器
