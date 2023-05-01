@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("OnGroundCheck")]
     public bool isGround;
+    public bool isBad;
     public float groundCheckRadius;         //检查半径
     public Transform checkGround;           
     public LayerMask groundPlayer;
@@ -36,9 +37,31 @@ public class PlayerController : MonoBehaviour
     private int inputFrames = 0;
     private float propsTime = 0f;           //��߳���ʱ��
     private float dirtyTime = 0f;           //����Ⱦ���е�ʱ��
+    private bool isPlaying = true;
+    private int airTime = 0;
+    private Vector3 airPos;
+    public event Action<string> OnLead;
+    public event Action OnLeadClosed;
+    public Dictionary<string, bool> propsMapBool = new Dictionary<string, bool> {
+        { "back",false },
+        {"wasd",false},
+        {"low",false },
+        {"fish",false },
+        {"toy",false}
+    };
+
+    public Dictionary<string, string> propsMap = new Dictionary<string, string> {
+        { "back","危险的人类堵住了海豹们赖以生存的冰洞，作为海豹一族最勇敢的豹豹，你将踏上疏通冰洞的旅途" },
+        {"wasd","听说你是《豹肚弹弹》比赛的冠军，你可以通过弹跳跨越障碍，躲避危险的人类,通过wasd你可以前后左右移动" },
+        {"low","根据...能量%#￥%定律...你没法一直这样跳下去，看看你的蓄力槽，按下？？键，你能再次一飞冲天！" },
+        {"fish","嘿，看你捡到了什么？神奇鱼鱼！吃了这东西，你将跳的更高，污染值也会下降”（（有点尬，这么说" },
+        {"toy","嘿，这是什么！一个mini版的你。它可以让你抵挡一次暴怒人类抓捕，毕竟他们傻乎乎的分不清哪个是玩偶" }
+    };
 
     public GameObject angerUIPrefab;
     public Action GameOver;
+
+
 
 
 
@@ -47,6 +70,8 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
         controller = GetComponent<CharacterController>();
+        airPos = checkGround.position;
+        isBad = false;
     }
 
     private void OnEnable()
@@ -58,17 +83,34 @@ public class PlayerController : MonoBehaviour
     {
         SaveManager.Instance.LoadPlayerData();
         Instantiate(angerUIPrefab);
+        if (GameManager.Instance.curLevel == 1)
+        {
+            if (!propsMapBool["back"])
+            {
+                OnLead?.Invoke(propsMap["back"]);
+                propsMapBool["back"] = true;
+            }       
+        }
     }
 
     private void Update()
     {
-        CheckPlayerCondition();
-        SwitchAnimation();
-        SimulatePhysics();
-        TryToJump();
-        ApplyJump();
-        ApplySlide();
-        CheckProps(); 
+        //FIXME:测试代码 记得删除
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            isPlaying = !isPlaying;
+        }
+        if (isPlaying)
+        {
+            CheckPlayerCondition();
+            SwitchAnimation();
+            SimulatePhysics();
+            TryToJump();
+            ApplyJump();
+            ApplySlide();
+            CheckProps();
+            if (isBad) Debug.Log("1!");
+        }
     }
 
 
@@ -138,7 +180,38 @@ public class PlayerController : MonoBehaviour
     {
         playerVelocity.y += gravity * Time.deltaTime;
         isGround = Physics.CheckSphere(checkGround.position, groundCheckRadius, groundPlayer);
-        if (isGround && playerVelocity.y < 0)
+        if (isGround == false)
+        {
+            RaycastHit hit;
+            Vector3 origin = transform.position;
+            Vector3 direction = transform.TransformDirection(new Vector3(0, -1, 0));
+            if (Physics.Raycast(origin, direction, out hit, Mathf.Infinity, groundPlayer))
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0, -1, 0)));
+                if (Vector3.Distance(hit.transform.position, checkGround.position) > 0)
+                {
+                    
+                    if (airPos == checkGround.position && playerVelocity.y!=0)
+                    {
+                        airTime++;
+                        Debug.Log(playerVelocity.y);
+                    }
+                    else
+                    {
+                        airPos = checkGround.position;
+                        airTime = 0;
+                        isGround = false;
+                    }
+                    // 异常卡死情况
+                    if (airTime > 50)
+                    {
+                        isGround = true;
+                        airTime = 0;
+                    }
+                }
+            }
+        }
+        if ((isGround) && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
@@ -148,12 +221,12 @@ public class PlayerController : MonoBehaviour
     private bool TryJumpWhenStill()
     {
         // 静止在地面上，准备起跳第一次
-        return !isJumpping && !isSliding && isGround;
+        return !isJumpping && !isSliding && (isGround);
     }
 
     private bool TryJumpWhenSlide()
     {
-        return !isJumpping && isSliding && isGround;
+        return !isJumpping && isSliding && (isGround);
     }
 
     private void TryToJump()
@@ -306,6 +379,11 @@ public class PlayerController : MonoBehaviour
         {
             dirtyTime += Time.deltaTime;
         }
+        //ui
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            OnLeadClosed?.Invoke();
+        }
     }
     void OnTriggerEnter(Collider other)
     {
@@ -336,6 +414,14 @@ public class PlayerController : MonoBehaviour
         //神奇小鱼：即用道具，清空污染槽，跳跃与水平移动均增幅30%，使用后消失
         if (other.gameObject.tag.CompareTo("fish") == 0)
         {
+            if (!propsMapBool["fish"])
+            {
+                Debug.Log("1");
+                OnLead?.Invoke(propsMap["fish"]);
+                Debug.Log("2");
+                propsMapBool["fish"] = true;
+                Debug.Log("3");
+            }
             Debug.Log("触发道具：神奇小鱼");
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
             characterStats.AngerNum++;//蓄力值+1
