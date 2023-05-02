@@ -18,7 +18,7 @@ public class HumanTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player")//被人类抓住
         {
             UnityEditor.EditorApplication.isPlaying = false;
         }
