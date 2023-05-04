@@ -71,7 +71,6 @@ public class PlayerController : MonoBehaviour
         characterStats = GetComponent<CharacterStats>();
         controller = GetComponent<CharacterController>();
         airPos = checkGround.position;
-        isBad = false;
     }
 
     private void OnEnable()
@@ -109,7 +108,6 @@ public class PlayerController : MonoBehaviour
             ApplyJump();
             ApplySlide();
             CheckProps();
-            if (isBad) Debug.Log("1!");
         }
     }
 
@@ -332,17 +330,10 @@ public class PlayerController : MonoBehaviour
         {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
-            if (horizontal != 0 || vertical != 0)
-            {
-                Vector3 moveDir = new Vector3(horizontal, 0, vertical).normalized;
-                Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
-                transform.rotation = Quaternion.LookRotation(targetDir);
-                controller.Move(moveDir * speed * Time.deltaTime);
-            }
-            else
-            {
-                controller.Move(transform.forward * speed * Time.deltaTime);
-            }
+            Vector3 moveDir = new Vector3(vertical, 0, horizontal).normalized;
+            Vector3 targetDir = Vector3.Slerp(transform.forward, moveDir, 2 * Time.deltaTime);
+            transform.rotation = Quaternion.LookRotation(targetDir);
+            controller.Move(moveDir * speed * Time.deltaTime);
         }
     }
 
