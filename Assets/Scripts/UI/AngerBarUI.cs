@@ -10,15 +10,11 @@ public class AngerBarUI : MonoBehaviour
 
     private void Start()
     {
+        GameManager.Instance.playerStats.OnAngerChanged += UpdateUI;
         UpdateUI(GameManager.Instance.playerStats.AngerNum);
     }
 
-    private void OnEnable()
-    {
-        GameManager.Instance.playerStats.OnAngerChanged += UpdateUI;
-    }
-
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameManager.Instance.playerStats.OnAngerChanged -= UpdateUI;
     }
