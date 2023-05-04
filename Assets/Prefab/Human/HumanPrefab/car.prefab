@@ -221,7 +221,7 @@ MonoBehaviour:
   patrolType: 1
   dizzyTime: 0.2
   turningSpeed: 100
-  hunterPrefab: {fileID: 324727030108283062, guid: af5e1a11536907d459dc89f1e4a445aa, type: 3}
+  hunterPrefab: {fileID: 8725604269522614942, guid: 1c08b6338b9c42e4990087733dcc72d9, type: 3}
 --- !u!1 &3824205193511677998
 GameObject:
   m_ObjectHideFlags: 0
