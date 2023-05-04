@@ -17,6 +17,7 @@ TagManager:
   - tent_disable
   - dirty_pool
   - iceHole
+  - car
   layers:
   - Default
   - TransparentFX

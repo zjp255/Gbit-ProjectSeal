@@ -45,7 +45,7 @@ public class Hunter : Human
     void Start()
     {
         warningStrip = Instantiate(warningStrip);
-        warningStrip.transform.SetParent(GameObject.Find("Canvas").transform);
+        warningStrip.transform.SetParent(GameObject.Find("HumanCanvas").transform);
         warningStripSize = warningStrip.GetComponent<RectTransform>().sizeDelta;
         status = E_HumanStatus.idle;
         nextPatrolPoint = 0;
@@ -53,6 +53,7 @@ public class Hunter : Human
         player = GameObject.FindGameObjectWithTag("Player");
         //angle_rightTan = (180 - sightAngle) / 2 / 180  * Mathf.PI;
         //angle_leftTan = ((180 - sightAngle) / 2 + sightAngle) / 180 * Mathf.PI;
+       
 
         if (hunterType == E_hunterType.car)
         {
@@ -130,20 +131,26 @@ public class Hunter : Human
     /// </summary>
     public bool playerIsInRange()
     {
-        float angle = Vector3.Angle(transform.forward, player.transform.position - transform.position);
-        
-        if (Vector3.Distance(transform.position, player.transform.position) < sightR && angle < sightAngle)
+        if (player != null)
         {
-            RaycastHit hit;
-           
-            Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
-            if (hit.transform.tag == "Player")
+            float angle = Vector3.Angle(transform.forward, player.transform.position - transform.position);
+
+            if (Vector3.Distance(transform.position, player.transform.position) < sightR && angle < sightAngle)
             {
-                
-                return true;
+                RaycastHit hit;
+
+                Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
+                if (hit.transform.tag == "Player")
+                {
+
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+        else {
+            return false;
+        }
     }
     #endregion
 
