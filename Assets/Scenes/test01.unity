@@ -470,6 +470,14 @@ PrefabInstance:
       propertyPath: patrolPointS.Array.data[1].z
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 8502421401629764365, guid: af9ea0a0d521d7444b473cdb3b27af87, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8502421401629764366, guid: af9ea0a0d521d7444b473cdb3b27af87, type: 3}
+      propertyPath: toy
+      value: 
+      objectReference: {fileID: 1540830102940405514, guid: 40ec671eb66956644ab0475690524420, type: 3}
     - target: {fileID: 8502421402053871740, guid: af9ea0a0d521d7444b473cdb3b27af87, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -911,6 +919,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3824205193449155402, guid: 68bb90edfc5e114468f38745643b23c1, type: 3}
+      propertyPath: m_Height
+      value: 0.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824205193449155402, guid: 68bb90edfc5e114468f38745643b23c1, type: 3}
+      propertyPath: m_Radius
+      value: 0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824205193449155402, guid: 68bb90edfc5e114468f38745643b23c1, type: 3}
+      propertyPath: m_Center.y
+      value: -0.21
+      objectReference: {fileID: 0}
     - target: {fileID: 3824205193449155403, guid: 68bb90edfc5e114468f38745643b23c1, type: 3}
       propertyPath: m_Name
       value: car
@@ -929,7 +949,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3824205193449155406, guid: 68bb90edfc5e114468f38745643b23c1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.624
+      value: 1.99
       objectReference: {fileID: 0}
     - target: {fileID: 3824205193449155406, guid: 68bb90edfc5e114468f38745643b23c1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1036,5 +1056,13 @@ PrefabInstance:
       propertyPath: patrolPointS.Array.data[1].x
       value: 10.47
       objectReference: {fileID: 0}
+    - target: {fileID: 8725604269955045868, guid: 1c08b6338b9c42e4990087733dcc72d9, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8725604269955045871, guid: 1c08b6338b9c42e4990087733dcc72d9, type: 3}
+      propertyPath: toy
+      value: 
+      objectReference: {fileID: 1540830102940405514, guid: 40ec671eb66956644ab0475690524420, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c08b6338b9c42e4990087733dcc72d9, type: 3}
