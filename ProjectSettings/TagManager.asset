@@ -17,6 +17,8 @@ TagManager:
   - tent_disable
   - dirty_pool
   - iceHole
+  - super_bed
+  - super_bed_disable
   layers:
   - Default
   - TransparentFX
