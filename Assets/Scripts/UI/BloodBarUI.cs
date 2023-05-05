@@ -7,12 +7,12 @@ public class BloodBarUI : MonoBehaviour
 {
     public Image fillImage;
 
-    private void OnEnable()
+    private void Start()
     {
         GameManager.Instance.playerStats.OnBloodChanged += UpdateUI;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameManager.Instance.playerStats.OnBloodChanged -= UpdateUI;
     }
