@@ -30,7 +30,7 @@ public class Hunter : Human
     public float addSightR;//苏醒后增加的半径
     public float sightAngle = 60f;//视野角度
     public bool isShowSight = false;//是否显示视野
-
+    int layerMask = 0;
     [Header("警戒条")]
     public float warningSpeed;//警戒值增长速度
     public GameObject warningStrip;//警戒条
@@ -44,6 +44,9 @@ public class Hunter : Human
     // Start is called before the first frame update
     void Start()
     {
+        layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
+        layerMask = ~layerMask;
+
         warningStrip = Instantiate(warningStrip);
         warningStrip.transform.SetParent(GameObject.Find("HumanCanvas").transform);
         warningStripSize = warningStrip.GetComponent<RectTransform>().sizeDelta;
@@ -138,8 +141,7 @@ public class Hunter : Human
             if (Vector3.Distance(transform.position, player.transform.position) < sightR && angle < sightAngle)
             {
                 RaycastHit hit;
-
-                Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
+                bool a = Physics.Raycast(new Ray(transform.position, player.transform.position + new Vector3(0,0.5f,0) - transform.position), out hit, outRange, layerMask);              
                 if (hit.transform.tag == "Player")
                 {
 
@@ -265,7 +267,7 @@ public class Hunter : Human
     void playerOutRange()
     {
         RaycastHit hit;
-        Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, outRange, 1 << 0);
+        Physics.Raycast(new Ray(transform.position, player.transform.position + new Vector3(0, 0.5f, 0) - transform.position), out hit, outRange, layerMask);
         if (Vector3.Distance(transform.position, player.transform.position) > outRange || hit.transform.tag != "Player")
         {
             playerMissPoint = player.transform.position;
@@ -303,7 +305,7 @@ public class Hunter : Human
             characterController.SimpleMove(transform.forward * patrolSpeed);
             move(playerMissPoint, patrolSpeed);
             RaycastHit hit;
-            if (Physics.Raycast(new Ray(transform.position, transform.TransformPoint(transform.forward)), out hit, outRange, 1 << 0) && hit.transform.tag != "Player")
+            if (Physics.Raycast(new Ray(transform.position, transform.TransformPoint(transform.forward)), out hit, outRange, layerMask) && hit.transform.tag != "Player")
             {
                 status = E_HumanStatus.loseSight2;
                 lookAtRight = transform.TransformPoint(new Vector3(2, 0, -2));
