@@ -19,6 +19,7 @@ TagManager:
   - iceHole
   - super_bed
   - super_bed_disable
+  - car
   layers:
   - Default
   - TransparentFX

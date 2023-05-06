@@ -8,17 +8,6 @@ public class Lead : MonoBehaviour
     public GameObject image;
     public GameObject text;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     void setActiveTrue(string s)
     {
         Debug.Log("!!");
@@ -30,13 +19,13 @@ public class Lead : MonoBehaviour
         image.SetActive(false);
     }
 
-    private void OnEnable()
+    private void Start()
     {
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().OnLead += setActiveTrue;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().OnLeadClosed += setActiveFalse;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().OnLead -= setActiveTrue;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().OnLeadClosed -= setActiveFalse;

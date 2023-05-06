@@ -88,7 +88,6 @@ public class SceneController : Singleton<SceneController>,IEndGameObserver
     public void TransitionToLevel(int index)
     {
         string name = "Level" + index;
-        Debug.Log(name);
         StartCoroutine(LoadLevel(name));
     }
 
