@@ -3226,6 +3226,7 @@ GameObject:
   - component: {fileID: 1497960940600501797}
   - component: {fileID: 3841947553968231432}
   - component: {fileID: 394841105757247840}
+  - component: {fileID: 7256964639900397151}
   m_Layer: 0
   m_Name: word
   m_TagString: Untagged
@@ -3280,7 +3281,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0ff8341fd459e404995f31d25e00a4d3, type: 2}
   m_sharedMaterial: {fileID: -5459410016884986833, guid: 0ff8341fd459e404995f31d25e00a4d3, type: 2}
@@ -3349,6 +3350,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7256964639900397151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7936901865870770777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b70458ab0adbd554e83bdd285a01005c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 0}
+  text: {fileID: 0}
 --- !u!1 &8131569063336825977
 GameObject:
   m_ObjectHideFlags: 0

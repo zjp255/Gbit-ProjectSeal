@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class Lead : MonoBehaviour
 {
@@ -10,8 +12,7 @@ public class Lead : MonoBehaviour
 
     void setActiveTrue(string s)
     {
-        Debug.Log("!!");
-        text.GetComponent<Text>().text = s;
+        text.GetComponent<TextMeshProUGUI>().text = s;
         image.SetActive(true);
     }
     void setActiveFalse()
