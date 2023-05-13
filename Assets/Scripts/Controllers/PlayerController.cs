@@ -396,9 +396,24 @@ public class PlayerController : MonoBehaviour
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
             characterStats.AngerNum++;//蓄力值+1
             other.gameObject.tag = "bed_disable";
+            other.gameObject.SetActive(false);
             Debug.Log("道具触发结束");
         }
         if (other.gameObject.tag.CompareTo("bed_disable") == 0)
+        {
+            Debug.Log("bed_disable");
+        }
+        //床：跳跃增幅20%，蓄力值+1，使用后变成bed_disable
+        if (other.gameObject.tag.CompareTo("super_bed") == 0)
+        {
+            Debug.Log("触发道具：super床");
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//蓄力值+1
+            other.gameObject.tag = "super_bed_disable";
+            other.gameObject.SetActive(false);
+            Debug.Log("道具触发结束");
+        }
+        if (other.gameObject.tag.CompareTo("super_bed_disable") == 0)
         {
             Debug.Log("bed_disable");
         }
