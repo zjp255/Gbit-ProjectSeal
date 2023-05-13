@@ -42,21 +42,52 @@ public class PlayerController : MonoBehaviour
     private Vector3 airPos;
     public event Action<string> OnLead;
     public event Action OnLeadClosed;
+    public Dictionary<string, int> propsMapBoolEmoj = new Dictionary<string, int> {
+        { "back",0 },
+        {"wasd",1},
+        {"low",2 },
+        {"bed",1},
+        {"fish",1 },
+        {"toy",3},
+        {"human",2},
+        {"attack",2 },
+        {"after_good_human_capture",1 },
+        {"after_bad_human_capture_but_toy",2},
+        { "over",4 },
+        {"car",2},
+        {"pass",1 }
+    };
     public Dictionary<string, bool> propsMapBool = new Dictionary<string, bool> {
         { "back",false },
         {"wasd",false},
         {"low",false },
+        {"bed",false},
         {"fish",false },
-        {"toy",false}
+        {"toy",false},
+        {"human",false},
+        {"attack",false },
+        {"after_good_human_capture",false },
+        {"after_bad_human_capture_but_toy",false},
+        { "over",false },
+        {"car",false},
+        {"pass",false }
+    };
+    public Dictionary<string, string> propsMap = new Dictionary<string, string> {
+        { "back","“危险的人类堵住了海豹们赖以生存的冰洞，作为海豹一族最勇敢的豹豹，你将踏上疏通冰洞的旅途”" },
+        {"wasd","“听说你是《豹肚弹弹》比赛的冠军，你可以通过弹跳跨越障碍，躲避危险的人类,通过wasd你可以前后左右移动”" },
+        {"low","“根据...能量%#￥%定律...你没法一直这样跳下去，看看你的蓄力槽，按下？？键，你能再次一飞冲天！”" },
+        {"bed","“呜呼呼~蹦床，我爱蹦床，它能让我们跳得更高！”"},
+        {"fish","“嘿，看你捡到了什么？神奇鱼鱼！吃了这东西，你将跳的更高，污染值也会下降。”" },
+        {"toy","“嘿，这是什么！一个mini版的你。它可以让你抵挡一次暴怒人类抓捕，毕竟他们傻乎乎的分不清哪个是玩偶”" },
+        {"human","“噢噢，是危险的人类，快躲开他们，尤其是那些火冒三丈的，你也不想被他们抓走吧！”"},
+        {"attack","“海豹的肚皮对人类是致命的武器，豹击他们的头！看看能不能掉落好东西。”" },
+        {"after_good_human_capture","“哈哈，算你好运，这种人类中了‘可爱豹击’魔咒，他们不会伤害你，但你要从头开始喽~”" },
+        {"after_bad_human_capture_but_toy","“哈哈，看看这个愚蠢的人类，你成功用海豹玩偶骗过了他！”" },
+        {"over","“探险者！你的旅途悲哀的结束了，残暴的人类给豹豹带来了灭顶之灾，但在绝望的未来，期望你重新归来。”" },
+        {"car","“咦，豹击车顶让你跳的更高了，这是什么原理？”" },
+        {"pass","“太好了，我果然没有看错你，冰洞重见天日！继续披荆斩棘吧！”" }
     };
 
-    public Dictionary<string, string> propsMap = new Dictionary<string, string> {
-        { "back","危险的人类堵住了海豹们赖以生存的冰洞，作为海豹一族最勇敢的豹豹，你将踏上疏通冰洞的旅途" },
-        {"wasd","听说你是《豹肚弹弹》比赛的冠军，你可以通过弹跳跨越障碍，躲避危险的人类,通过wasd你可以前后左右移动" },
-        {"low","根据...能量%#￥%定律...你没法一直这样跳下去，看看你的蓄力槽，按下？？键，你能再次一飞冲天！" },
-        {"fish","嘿，看你捡到了什么？神奇鱼鱼！吃了这东西，你将跳的更高，污染值也会下降”（（有点尬，这么说" },
-        {"toy","嘿，这是什么！一个mini版的你。它可以让你抵挡一次暴怒人类抓捕，毕竟他们傻乎乎的分不清哪个是玩偶" }
-    };
 
     public GameObject angerUIPrefab;
     public Action GameOver;
@@ -396,9 +427,24 @@ public class PlayerController : MonoBehaviour
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
             characterStats.AngerNum++;//蓄力值+1
             other.gameObject.tag = "bed_disable";
+            other.gameObject.SetActive(false);
             Debug.Log("道具触发结束");
         }
         if (other.gameObject.tag.CompareTo("bed_disable") == 0)
+        {
+            Debug.Log("bed_disable");
+        }
+        //床：跳跃增幅20%，蓄力值+1，使用后变成bed_disable
+        if (other.gameObject.tag.CompareTo("super_bed") == 0)
+        {
+            Debug.Log("触发道具：super床");
+            curJumpHeight = curJumpHeight * (1 + jumpOnProps);
+            characterStats.AngerNum++;//蓄力值+1
+            other.gameObject.tag = "super_bed_disable";
+            other.gameObject.SetActive(false);
+            Debug.Log("道具触发结束");
+        }
+        if (other.gameObject.tag.CompareTo("super_bed_disable") == 0)
         {
             Debug.Log("bed_disable");
         }
