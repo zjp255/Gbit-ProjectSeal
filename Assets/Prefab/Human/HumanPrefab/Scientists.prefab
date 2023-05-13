@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 1293919967}
   m_Layer: 0
   m_Name: Scientists
-  m_TagString: Untagged
+  m_TagString: human_h1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

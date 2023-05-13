@@ -55,7 +55,8 @@ public class PlayerController : MonoBehaviour
         {"after_bad_human_capture_but_toy",2},
         { "over",4 },
         {"car",2},
-        {"pass",1 }
+        {"pass",1 },
+        {"dirty",2}
     };
     public Dictionary<string, bool> propsMapBool = new Dictionary<string, bool> {
         { "back",false },
@@ -70,7 +71,8 @@ public class PlayerController : MonoBehaviour
         {"after_bad_human_capture_but_toy",false},
         { "over",false },
         {"car",false},
-        {"pass",false }
+        {"pass",false },
+        {"dirty",false}
     };
     public Dictionary<string, string> propsMap = new Dictionary<string, string> {
         { "back","“危险的人类堵住了海豹们赖以生存的冰洞，作为海豹一族最勇敢的豹豹，你将踏上疏通冰洞的旅途”" },
@@ -85,17 +87,13 @@ public class PlayerController : MonoBehaviour
         {"after_bad_human_capture_but_toy","“哈哈，看看这个愚蠢的人类，你成功用海豹玩偶骗过了他！”" },
         {"over","“探险者！你的旅途悲哀的结束了，残暴的人类给豹豹带来了灭顶之灾，但在绝望的未来，期望你重新归来。”" },
         {"car","“咦，豹击车顶让你跳的更高了，这是什么原理？”" },
-        {"pass","“太好了，我果然没有看错你，冰洞重见天日！继续披荆斩棘吧！”" }
+        {"pass","“太好了，我果然没有看错你，冰洞重见天日！继续披荆斩棘吧！”" },
+        {"dirty","啊！这里是污染池，呆在里面你会被弄得越来越脏，污染值满了你就去见上帝老爷子了！" }
     };
 
 
     public GameObject angerUIPrefab;
     public Action GameOver;
-
-
-
-
-
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -220,14 +218,14 @@ public class PlayerController : MonoBehaviour
             Vector3 direction = transform.TransformDirection(new Vector3(0, -1, 0));
             if (Physics.Raycast(origin, direction, out hit, Mathf.Infinity, groundPlayer))
             {
-                Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0, -1, 0)));
+                //Debug.DrawRay(transform.position, transform.TransformDirection(new Vector3(0, -1, 0)));
                 if (Vector3.Distance(hit.transform.position, checkGround.position) > 0)
                 {
                     
                     if (airPos == checkGround.position && playerVelocity.y!=0)
                     {
                         airTime++;
-                        Debug.Log(playerVelocity.y);
+                        //Debug.Log(playerVelocity.y);
                     }
                     else
                     {
@@ -429,10 +427,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("bed") == 0)
         {
             Debug.Log("触发道具：床");
-
-            OnLead?.Invoke(propsMap["bed"]); 
-            propsMapBool["bed"] = true;
-
+            if (!propsMapBool["bed"])
+            {
+                OnLead?.Invoke(propsMap["bed"]);
+                propsMapBool["bed"] = true;
+            }
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
             characterStats.AngerNum++;//蓄力值+1
             other.gameObject.tag = "bed_disable";
@@ -447,6 +446,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("super_bed") == 0)
         {
             Debug.Log("触发道具：super床");
+            if (!propsMapBool["bed"])
+            {
+                OnLead?.Invoke(propsMap["bed"]);
+                propsMapBool["bed"] = true;
+            }
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
             characterStats.AngerNum++;//蓄力值+1
             other.gameObject.tag = "super_bed_disable";
@@ -462,11 +466,8 @@ public class PlayerController : MonoBehaviour
         {
             if (!propsMapBool["fish"])
             {
-                Debug.Log("1");
                 OnLead?.Invoke(propsMap["fish"]);
-                Debug.Log("2");
                 propsMapBool["fish"] = true;
-                Debug.Log("3");
             }
             Debug.Log("触发道具：神奇小鱼");
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
@@ -481,8 +482,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("toy") == 0)
         {
             Debug.Log("触发道具：海豹玩偶");
-            OnLead?.Invoke(propsMap["toy"]);
-            propsMapBool["toy"] = true;
+            if (!propsMapBool["toy"])
+            {
+                OnLead?.Invoke(propsMap["toy"]);
+                propsMapBool["toy"] = true;
+            }
             characterStats.BloodNum++;//血条+1
             other.gameObject.SetActive(false);//隐藏物体
             Debug.Log("道具触发结束，消失");
@@ -491,12 +495,32 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("human_h1") == 0)
         {
             Debug.Log("触发道具：普通人类");
+            if (!propsMapBool["human"])
+            {
+                OnLead?.Invoke(propsMap["human"]);
+                propsMapBool["human"] = true;
+            }
+            if (!propsMapBool["attack"])
+            {
+                OnLead?.Invoke(propsMap["attack"]);
+                propsMapBool["attack"] = true;
+            }
             curJumpHeight = curJumpHeight * (1 + jumpOnHuman);
             characterStats.AngerNum++;//蓄力值+1
         }
         if (other.gameObject.tag.CompareTo("human_h2") == 0)
         {
             Debug.Log("触发道具：狂暴人类");
+            if (!propsMapBool["human"])
+            {
+                OnLead?.Invoke(propsMap["human"]);
+                propsMapBool["human"] = true;
+            }
+            if (!propsMapBool["attack"])
+            {
+                OnLead?.Invoke(propsMap["attack"]);
+                propsMapBool["attack"] = true;
+            }
             curJumpHeight = curJumpHeight * (1 + jumpOnHuman);
             characterStats.AngerNum+=3;//蓄力值+3
         }
@@ -504,6 +528,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("car") == 0)
         {
             Debug.Log("触发道具：篷车");
+            if (!propsMapBool["car"])
+            {
+                OnLead?.Invoke(propsMap["car"]);
+                propsMapBool["car"] = true;
+            }
             curJumpHeight = curJumpHeight * (1 + jumpOnCar);
             characterStats.AngerNum+=4;//蓄力值+4
             Debug.Log("道具触发结束，消失");
@@ -512,13 +541,23 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.tag.CompareTo("dirty_pool") == 0)
         {
             Debug.Log("dirty_in");
+            if (!propsMapBool["dirty"])
+            {
+                OnLead?.Invoke(propsMap["dirty"]);
+                propsMapBool["dirty"] = true;
+            }
             isDirty = true;
         }
 
         //冰洞：切换关卡
         if (other.gameObject.tag.CompareTo("iceHole") == 0)
         {
-            if(other.gameObject.GetComponent<IceHole>().isUsed == false)
+            if (!propsMapBool["pass"])
+            {
+                OnLead?.Invoke(propsMap["pass"]);
+                propsMapBool["pass"] = true;
+            }
+            if (other.gameObject.GetComponent<IceHole>().isUsed == false)
             {
                 GameManager.Instance.curLevel += 1;
                 other.gameObject.GetComponent<IceHole>().isUsed = true;
