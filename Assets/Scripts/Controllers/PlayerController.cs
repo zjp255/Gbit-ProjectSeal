@@ -117,15 +117,17 @@ public class PlayerController : MonoBehaviour
         {
             if (!propsMapBool["back"])
             {
+                Debug.Log("!!!11");
                 OnLead?.Invoke(propsMap["back"]);
                 propsMapBool["back"] = true;
+                Debug.Log("!!!!11");
             }       
         }
     }
 
     private void Update()
     {
-        //FIXME:测试代码 记得删除
+        //FIXME:测试代码 记得删除www
         if (Input.GetKeyDown(KeyCode.P))
         {
             isPlaying = !isPlaying;
@@ -402,7 +404,8 @@ public class PlayerController : MonoBehaviour
             dirtyTime += Time.deltaTime;
         }
         //ui
-        if (Input.GetKeyDown(KeyCode.C))
+        //if (Input.GetKeyDown(KeyCode.C))
+        if(Input.anyKeyDown)
         {
             OnLeadClosed?.Invoke();
         }
@@ -424,6 +427,10 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("bed") == 0)
         {
             Debug.Log("触发道具：床");
+
+            OnLead?.Invoke(propsMap["bed"]); 
+            propsMapBool["bed"] = true;
+
             curJumpHeight = curJumpHeight * (1 + jumpOnProps);
             characterStats.AngerNum++;//蓄力值+1
             other.gameObject.tag = "bed_disable";
@@ -472,6 +479,8 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag.CompareTo("toy") == 0)
         {
             Debug.Log("触发道具：海豹玩偶");
+            OnLead?.Invoke(propsMap["toy"]);
+            propsMapBool["toy"] = true;
             characterStats.BloodNum++;//血条+1
             other.gameObject.SetActive(false);//隐藏物体
             Debug.Log("道具触发结束，消失");
