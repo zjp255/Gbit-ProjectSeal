@@ -102,6 +102,7 @@ public class PlayerController : MonoBehaviour
         characterStats = GetComponent<CharacterStats>();
         controller = GetComponent<CharacterController>();
         airPos = checkGround.position;
+        SaveManager.Instance.LoadLeadData(propsMapBool, "propsMapBool");
     }
 
     private void OnEnable()
@@ -120,6 +121,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("!!!11");
                 OnLead?.Invoke(propsMap["back"]);
                 propsMapBool["back"] = true;
+                SaveManager.Instance.SaveLeadData(propsMapBool, "propsMapBool");
                 Debug.Log("!!!!11");
             }       
         }

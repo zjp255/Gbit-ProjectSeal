@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -42,6 +44,21 @@ public class SaveManager : Singleton<SaveManager>
     public void LoadPlayerData()
     {
         Load(GameManager.Instance.playerStats.characterData, GameManager.Instance.playerStats.characterData.name);
+    }
+
+    public void SaveLeadData(Dictionary<string, bool> data, string key)
+    {
+        var jsonData = JsonConvert.SerializeObject(data, Formatting.Indented);
+        PlayerPrefs.SetString(key, jsonData);
+        PlayerPrefs.Save();
+    }
+
+    public void LoadLeadData(Dictionary<string, bool> data, string key)
+    {
+        if (PlayerPrefs.HasKey(key))
+        {
+            JsonUtility.FromJsonOverwrite(PlayerPrefs.GetString(key), data);
+        }
     }
 
     public void Save(Object data,string key)
