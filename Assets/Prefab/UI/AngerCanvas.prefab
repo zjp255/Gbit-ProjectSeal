@@ -3280,10 +3280,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: whatwhatwhatwhatwhatwhatwhatwhatwhatwhatwhatwhat
+  m_text: "\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79\u6D77\u8C79"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0ff8341fd459e404995f31d25e00a4d3, type: 2}
+  m_sharedMaterial: {fileID: -5459410016884986833, guid: 0ff8341fd459e404995f31d25e00a4d3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
