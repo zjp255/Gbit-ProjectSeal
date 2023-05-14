@@ -45,7 +45,7 @@ public class AudioManager : MonoBehaviour
         {
             if (isStart == true)
             {
-                startAudioSource.Play();
+                closeStartAudioSource();
             }
             else
             {
