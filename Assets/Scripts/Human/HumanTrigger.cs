@@ -20,7 +20,7 @@ public class HumanTrigger : MonoBehaviour
     {
         if (other.tag == "Player")//被人类抓住
         {
-            UnityEditor.EditorApplication.isPlaying = false;
+            other.GetComponent<PlayerController>().isDead = true;
         }
     }
 }

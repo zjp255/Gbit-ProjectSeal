@@ -85,6 +85,7 @@ public class Hunter : Human
                     inPatrol();
                     break;
                 case E_HumanStatus.warning:
+                    GetComponent<HumanAudio>().findPlayerAudio();
                     animator.SetBool("isRun",false);
                     inWarning();
                     break;

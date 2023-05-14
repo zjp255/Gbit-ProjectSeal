@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     private Animator anim;//播放动画
     private CharacterStats characterStats;//属性
-    private bool isDead;//是否死亡
+    public bool isDead;//是否死亡
 
     [Header("Gravity")]
     public float gravity = -9.81f;
@@ -289,6 +289,7 @@ public class PlayerController : MonoBehaviour
                 isJumpping = true;
                 isSliding = false;
             }
+            
         }
     }
 
@@ -346,6 +347,7 @@ public class PlayerController : MonoBehaviour
                     playerVelocity.y = Mathf.Sqrt(-gravity * 2f * curJumpHeight);
                     // 每次落地，最大高度衰减5%
                     curJumpHeight = curJumpHeight * (1 - heightReduceFactor);
+                    GetComponent<playerAudio>().playJumpAudio();//播放跳跃音乐
                 }
                 else
                 {
@@ -494,6 +496,8 @@ public class PlayerController : MonoBehaviour
         //人类：速度增益20 %
         if (other.gameObject.tag.CompareTo("human_h1") == 0)
         {
+
+            GetComponent<playerAudio>().playHitAudio();
             Debug.Log("触发道具：普通人类");
             if (!propsMapBool["human"])
             {
@@ -510,6 +514,7 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag.CompareTo("human_h2") == 0)
         {
+            GetComponent<playerAudio>().playHitAudio();
             Debug.Log("触发道具：狂暴人类");
             if (!propsMapBool["human"])
             {
