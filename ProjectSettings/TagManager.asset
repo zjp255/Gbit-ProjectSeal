@@ -20,6 +20,9 @@ TagManager:
   - super_bed
   - super_bed_disable
   - car
+  - human
+  - human_h2
+  - human_h1
   layers:
   - Default
   - TransparentFX

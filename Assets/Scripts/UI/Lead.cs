@@ -7,22 +7,52 @@ using TMPro;
 
 public class Lead : MonoBehaviour
 {
-    public GameObject image;
-    public GameObject text;
+    private GameObject image;
+    private GameObject text;
+    //public GameObject[] sealFather;
+
+
+    private void Awake()
+    {
+        image = GameObject.Find("talk_bar");
+        text = GameObject.Find("word");
+    }
 
     void setActiveTrue(string s)
     {
-        text.GetComponent<TextMeshProUGUI>().text = s;
         image.SetActive(true);
+        TextMeshProUGUI textComponent = text.GetComponent<TextMeshProUGUI>();
+        if(textComponent != null)
+        {
+            textComponent.text = s;
+        }
     }
     void setActiveFalse()
     {
         image.SetActive(false);
     }
 
+   /* void setFather(int num) 
+    {
+        for(int i=0;i<4;i++)
+        {
+            if (i != num-1)
+            {
+                sealFather[i].SetActive(false);
+            }
+            else
+            {
+                sealFather[i].SetActive(true);
+            }
+        }
+    }*/
+
     private void Start()
     {
+        //sealFather = new GameObject[4];
+        //setFather(0);
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().OnLead += setActiveTrue;
+
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().OnLeadClosed += setActiveFalse;
     }
 

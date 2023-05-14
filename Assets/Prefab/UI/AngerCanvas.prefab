@@ -1911,6 +1911,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 413091967300845659}
   text: {fileID: 7936901865870770777}
+  sealFather:
+  - {fileID: 8772737597587648438}
+  - {fileID: 8492602905897019959}
+  - {fileID: 675521868651976224}
+  - {fileID: 815052289281083204}
 --- !u!1 &4294251414835085409
 GameObject:
   m_ObjectHideFlags: 0
@@ -3281,7 +3286,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: "\u201C\u542C\u8BF4\u4F60\u662F\u300A\u8C79\u809A\u5F39\u5F39\u300B\u6BD4\u8D5B\u7684\u51A0\u519B\uFF0C\u4F60\u53EF\u4EE5\u901A\u8FC7\u5F39\u8DF3\u8DE8\u8D8A\u969C\u788D\uFF0C\u8EB2\u907F\u5371\u9669\u7684\u4EBA\u7C7B,\u901A\u8FC7wasd\u4F60\u53EF\u4EE5\u524D\u540E\u5DE6\u53F3\u79FB\u52A8\u201D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0ff8341fd459e404995f31d25e00a4d3, type: 2}
   m_sharedMaterial: {fileID: -5459410016884986833, guid: 0ff8341fd459e404995f31d25e00a4d3, type: 2}
@@ -3364,6 +3369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 0}
   text: {fileID: 0}
+  sealFather: []
 --- !u!1 &8131569063336825977
 GameObject:
   m_ObjectHideFlags: 0
